@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מילון מונחי נדל"ן - מועדון הנדל"ן</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Chosen Palette: Royal Blue & Neutrals -->
+    <!-- Updates: Added Footer with Creator Credit. -->
+    <style>
+        body {
+            font-family: 'Assistant', sans-serif;
+            background-color: #f8f9fa;
+        }
+        .formula-box {
+            background-color: #f1f5f9;
+            border-right: 4px solid #1e40af; /* Royal Blue */
+            padding: 12px;
+            border-radius: 4px;
+            font-family: monospace;
+            text-align: left;
+            direction: ltr;
+            margin-top: 12px;
+        }
+        .category-badge {
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 2px 8px;
+            border-radius: 9999px;
+            text-transform: uppercase;
+        }
+        .category-fin {
+            background-color: #dbeafe;
+            color: #1e40af;
+        }
+        .category-law {
+            background-color: #e0e7ff;
+            color: #3730a3;
+        }
+        .category-gen {
+            background-color: #e5e7eb;
+            color: #4b5563;
+        }
+        .filter-btn {
+            transition: all 0.2s ease-in-out;
+        }
+        .filter-btn.active {
+            background-color: #1e40af;
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        .filter-btn:not(.active):hover {
+            background-color: #f1f5f9;
+        }
+        
+        /* AI Features Styling */
+        .ai-btn {
+            background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+            color: white;
+            transition: opacity 0.2s;
+        }
+        .ai-btn:hover {
+            opacity: 0.9;
+        }
+        .ai-response-box {
+            background-color: #f0f9ff;
+            border: 1px solid #bae6fd;
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 12px;
+            font-size: 0.95rem;
+            color: #0c4a6e;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .typing-indicator::after {
+            content: '...';
+            animation: typing 1.5s infinite;
+        }
+        @keyframes typing {
+            0% { content: '.'; }
+            33% { content: '..'; }
+            66% { content: '...'; }
+        }
+
+        /* Modal Styling */
+        .modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .modal-backdrop.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            max-width: 500px;
+            width: 90%;
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+        .modal-backdrop.active .modal-content {
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body class="bg-gray-50 relative">
+
+    <div class="container mx-auto p-4 md:p-8 max-w-5xl flex flex-col min-h-screen">
+
+        <header class="mb-8 relative">
+            <!-- Logo container -->
+            <div class="absolute top-0 right-0">
+                <img src="logo.png" alt="לוגו מועדון הנדל"ן" class="h-40 w-auto object-contain" onerror="this.style.display='none'">
+            </div>
+            <div class="text-center pt-4 md:pt-0 pr-28 pl-4">
+                <h1 class="text-4xl md:text-5xl font-bold text-blue-800 mb-2">מילון מונחי נדל"ן</h1>
+                <p class="text-lg text-gray-600 font-medium">מועדון הנדל"ן | אוניברסיטת רייכמן</p>
+            </div>
+            
+            <!-- API Key Input with Save and Help Buttons -->
+            <div class="mt-6 flex justify-center items-center text-sm text-gray-500 gap-2 bg-gray-100 p-2 rounded-full w-fit mx-auto border border-gray-200 shadow-sm">
+                <span class="font-semibold text-xs">Gemini API Key:</span>
+                <input type="password" id="apiKeyInput" class="bg-white border border-gray-300 rounded px-2 py-1 w-32 focus:w-64 transition-all outline-none focus:border-blue-500 text-xs" placeholder="הדבק מפתח כאן...">
+                <button id="saveApiKeyBtn" class="bg-green-500 hover:bg-green-600 text-white rounded px-3 py-1 text-xs font-bold transition-colors shadow-sm" title="שמור מפתח">שמור</button>
+                <button id="openHelpBtn" class="bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold transition-colors" title="איך משיגים מפתח?">?</button>
+            </div>
+        </header>
+
+        <section id="introduction" class="mb-8 bg-white p-6 rounded-lg shadow-sm text-center border-t-4 border-blue-800">
+            <p class="text-gray-700 text-base leading-relaxed max-w-3xl mx-auto">
+                ברוכים הבאים למילון המונחים האינטראקטיבי של מועדון הנדל"ן. כאן ריכזנו עבורכם את מונחי היסוד המרכזיים בעולם הנדל"ן, הפיננסים והמשפט, הרלוונטיים במיוחד לשוק הישראלי.
+                <br><br>
+                המילון נועד לשמש ככלי עזר לימודי ונגיש, שיסייע לכם להעמיק את הידע ולהבין את השפה המקצועית. אתם יכולים לחפש מונח ספציפי בשורת החיפוש, או לסנן את המונחים לפי קטגוריה.
+                <br>
+                <strong>חדש!</strong> שילבנו בינה מלאכותית (AI) המאפשרת לקבל דוגמאות חיות לכל מונח ולהתייעץ עם מומחה וירטואלי (מותנה בהזנת מפתח API).
+            </p>
+        </section>
+
+        <div class="sticky top-0 bg-gray-50 py-4 z-10 mb-6 shadow-sm md:shadow-none">
+            <div class="flex flex-col md:flex-row gap-4">
+                <input type="search" id="searchInput" placeholder="חפש מונח..." class="flex-grow p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <div id="filterControls" class="flex justify-center gap-2 flex-wrap">
+                    <button data-filter="all" class="filter-btn active py-2 px-4 rounded-lg font-semibold bg-gray-200 text-gray-800">הכל</button>
+                    <button data-filter="fin" class="filter-btn py-2 px-4 rounded-lg font-semibold bg-gray-200 text-gray-800">פיננסי</button>
+                    <button data-filter="law" class="filter-btn py-2 px-4 rounded-lg font-semibold bg-gray-200 text-gray-800">משפטי</button>
+                    <button data-filter="gen" class="filter-btn py-2 px-4 rounded-lg font-semibold bg-gray-200 text-gray-800">כללי</button>
+                </div>
+            </div>
+        </div>
+
+        <main id="termsContainer" class="space-y-4 flex-grow">
+        </main>
+
+        <div id="noResults" class="text-center text-gray-500 text-lg py-16 hidden">
+            לא נמצאו מונחים התואמים את החיפוש.
+        </div>
+
+        <!-- Contact Section -->
+        <section class="mt-12 mb-8 border-t-2 border-gray-200 pt-8">
+            <div class="bg-blue-50 rounded-xl p-6 md:p-8 border border-blue-100">
+                <h2 class="text-2xl font-bold text-blue-800 mb-2 text-center">חסר לכם מונח? מצאתם טעות?</h2>
+                <p class="text-gray-700 mb-6 text-center">אנחנו תמיד שואפים להשתפר ולהרחיב את המאגר. נשמח לקבל מכם הצעות למונחים חדשים או הערות לשיפור.</p>
+                
+                <form id="contactForm" class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label for="senderName" class="block text-sm font-medium text-gray-700 mb-1">שם מלא</label>
+                            <input type="text" id="senderName" class="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" placeholder="ישראל ישראלי">
+                        </div>
+                        <div>
+                            <label for="suggestionType" class="block text-sm font-medium text-gray-700 mb-1">נושא הפנייה</label>
+                            <select id="suggestionType" class="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 bg-white">
+                                <option value="הוספת מונח חדש">הצעה להוספת מונח חדש</option>
+                                <option value="תיקון טעות">דיווח על טעות</option>
+                                <option value="הצעה לשיפור">הצעה כללית לשיפור</option>
+                                <option value="אחר">אחר</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="messageBody" class="block text-sm font-medium text-gray-700 mb-1">תוכן ההודעה / המונח המוצע</label>
+                        <textarea id="messageBody" rows="3" class="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" placeholder="כתבו כאן את המונח, ההסבר, או ההערה שלכם..."></textarea>
+                    </div>
+                    <div class="text-center">
+                        <button type="submit" class="bg-blue-700 hover:bg-blue-800 text-white font-bold py-2 px-8 rounded-lg transition-colors shadow-md">
+                            שליחת הצעה
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="text-center text-gray-400 text-xs pb-6 font-sans">
+            Created by Daniel Meshulam &copy; | 052-6548787
+        </footer>
+    </div>
+
+    <!-- Floating AI Chat Button -->
+    <button id="openChatBtn" class="fixed bottom-6 left-6 w-14 h-14 rounded-full ai-btn shadow-lg flex items-center justify-center text-2xl z-50 hover:scale-110 transition-transform">
+        ✨
+    </button>
+
+    <!-- AI Chat Modal -->
+    <div id="aiChatModal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-md flex flex-col h-[500px]">
+            <div class="p-4 border-b border-gray-100 flex justify-between items-center bg-gradient-to-r from-blue-600 to-purple-600 rounded-t-xl text-white">
+                <h3 class="font-bold text-lg flex items-center gap-2">
+                    <span>🤖</span> המומחה הווירטואלי
+                </h3>
+                <button id="closeChatBtn" class="text-white hover:text-gray-200 text-2xl">&times;</button>
+            </div>
+            <div id="chatHistory" class="flex-grow p-4 overflow-y-auto space-y-3 bg-gray-50">
+                <div class="bg-white p-3 rounded-lg shadow-sm self-start text-gray-800 text-sm border border-gray-200 max-w-[85%]">
+                    היי! אני מומחה הנדל"ן הווירטואלי שלך (מופעל ע"י Gemini). כדי שנוכל לדבר, ודא שהזנת מפתח API למעלה. שאל אותי כל דבר!
+                </div>
+            </div>
+            <div class="p-4 border-t border-gray-100 bg-white rounded-b-xl">
+                <div class="flex gap-2">
+                    <input type="text" id="chatInput" class="flex-grow border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:border-blue-500 text-sm" placeholder="שאל שאלה...">
+                    <button id="sendChatBtn" class="bg-blue-600 text-white rounded-lg px-4 py-2 hover:bg-blue-700 transition-colors">
+                        ➤
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Help Modal -->
+    <div id="helpModal" class="modal-backdrop">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold text-gray-800">איך משיגים מפתח Gemini API?</h3>
+                <button id="closeHelpBtn" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+            </div>
+            <div class="space-y-4 text-gray-700 text-base">
+                <p>כדי להשתמש בבינה המלאכותית (AI) באתר זה, נדרש מפתח אישי מגוגל. זה חינם ופשוט:</p>
+                <ol class="list-decimal list-inside space-y-2 bg-blue-50 p-4 rounded-lg border border-blue-100">
+                    <li>כנסו לאתר <strong><a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-blue-600 hover:underline">Google AI Studio</a></strong>.</li>
+                    <li>התחברו עם חשבון ה-Google שלכם.</li>
+                    <li>לחצו על הכפתור הכחול הגדול <strong>Create API Key</strong>.</li>
+                    <li>העתיקו את הקוד הארוך שקיבלתם.</li>
+                    <li>הדביקו אותו בתיבת <strong>Gemini API Key</strong> בראש העמוד כאן.</li>
+                </ol>
+                <p class="text-sm text-gray-500 mt-2">
+                    * המפתח נשמר רק בדפדפן שלכם ולא מועבר לשום מקום אחר.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- API Configuration ---
+        const apiKeyInput = document.getElementById('apiKeyInput');
+        const saveApiKeyBtn = document.getElementById('saveApiKeyBtn');
+        let userApiKey = localStorage.getItem('gemini_api_key') || "";
+        
+        if(userApiKey) apiKeyInput.value = userApiKey;
+
+        function saveApiKey() {
+            userApiKey = apiKeyInput.value.trim();
+            if (userApiKey) {
+                localStorage.setItem('gemini_api_key', userApiKey);
+                alert('המפתח נשמר בהצלחה! כעת ניתן להשתמש בפיצ\'רים החכמים.');
+            } else {
+                alert('נא להזין מפתח תקין.');
+            }
+        }
+
+        saveApiKeyBtn.addEventListener('click', saveApiKey);
+
+        apiKeyInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                saveApiKey();
+            }
+        });
+
+        // --- Help Modal Logic ---
+        const helpModal = document.getElementById('helpModal');
+        document.getElementById('openHelpBtn').onclick = () => helpModal.classList.add('active');
+        document.getElementById('closeHelpBtn').onclick = () => helpModal.classList.remove('active');
+        helpModal.addEventListener('click', (e) => {
+            if(e.target === helpModal) helpModal.classList.remove('active');
+        });
+
+        async function callGeminiAPI(prompt) {
+            const keyToUse = userApiKey;
+            if (!keyToUse) {
+                alert("חסר מפתח API. לחץ על סימן השאלה (?) ליד שדה המפתח לקבלת עזרה.");
+                throw new Error("No API Key");
+            }
+
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${keyToUse}`;
+            
+            const payload = {
+                contents: [{
+                    parts: [{ text: prompt }]
+                }]
+            };
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    const err = await response.json();
+                    throw new Error(err.error?.message || "API Error");
+                }
+
+                const data = await response.json();
+                return data.candidates[0].content.parts[0].text;
+            } catch (error) {
+                console.error(error);
+                alert("שגיאה בתקשורת עם Gemini. ודא שהמפתח תקין ושיש חיבור לרשת.");
+                return null;
+            }
+        }
+
+        // --- UI Logic ---
+
+        // 1. Contact Form
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = document.getElementById('senderName').value;
+            const type = document.getElementById('suggestionType').value;
+            const body = document.getElementById('messageBody').value;
+            const subject = encodeURIComponent(`מילון נדל"ן - ${type}`);
+            const emailBody = encodeURIComponent(`שלום לצוות מועדון הנדל"ן,\n\nשם השולח: ${name}\nנושא: ${type}\n\nתוכן ההודעה:\n${body}\n\n--------------------------------\nנשלח דרך מילון המונחים האינטראקטיבי`);
+            window.location.href = `mailto:realestate.reichman@gmail.com?subject=${subject}&body=${emailBody}`;
+        });
+
+        // 2. Data
+        const termsData = [
+             {
+                term: "ארנונה",
+                category: "gen",
+                definition: "מס מוניציפלי המוטל על ידי הרשות המקומית על מחזיקי נכסים (מבנים וקרקעות). התעריף נקבע בהתאם לסוג הנכס (מגורים, מסחר, משרדים), שטחו ומיקומו."
+            },
+            {
+                term: "אופציה (במקרקעין)",
+                category: "gen",
+                definition: "זכות הניתנת לרוכש פוטנציאלי לרכוש נכס במחיר קבוע מראש, בתוך תקופת זמן מוגדרת. תמורת האופציה משלם הרוכש 'דמי אופציה', שלעיתים יקוזזו ממחיר הנכס אם תמומש."
+            },
+            {
+                term: "בטוחה",
+                category: "fin",
+                definition: "נכס המשועבד לטובת מלווה (כגון בנק) להבטחת פירעון הלוואה. במקרה של משכנתא, הנכס הנרכש עצמו משמש כבטוחה."
+            },
+            {
+                term: "בית משותף",
+                category: "law",
+                definition: "מבנה שיש בו שתי דירות או יותר והוא נרשם בפנקס הבתים המשותפים. הרישום מגדיר את הבעלות על הדירות הספציפיות ('תת-חלקות') ואת החלק היחסי ברכוש המשותף הצמוד לכל דירה."
+            },
+            {
+                term: "ברוטו (שטח)",
+                category: "gen",
+                definition: "השטח הכולל של הנכס, כולל קירות חיצוניים, קירות פנימיים, וכן חלק יחסי בשטחים המשותפים בבניין (כגון חדר מדרגות, לובי, ממ\"ק קומתי)."
+            },
+            {
+                term: "גוש חלקה",
+                category: "law",
+                definition: "שיטת רישום המקרקעין בישראל. כל קרקע מחולקת ל'גוש', וכל גוש מחולק ל'חלקות'. לכל חלקה יש תת-חלקה אם מדובר בבית משותף (דירה ספציפית)."
+            },
+            {
+                term: "גרייס (Grace)",
+                category: "fin",
+                definition: "תקופת 'חסד' בתחילת תקופת המשכנתא, שבה הלווה משלם רק את הריבית על ההלוואה (גרייס חלקי) או לא משלם כלל (גרייס מלא). נפוץ בפרויקטים של בנייה."
+            },
+            {
+                term: "דמי היוון",
+                category: "law",
+                definition: "תשלום חד-פעמי לרשות מקרקעי ישראל (רמ\"י) המשולם מראש עבור כל תקופת החכירה, ופוטר את החוכר מתשלום דמי חכירה שנתיים שוטפים."
+            },
+            {
+                term: "דמי מפתח",
+                category: "gen",
+                definition: "שיטת שכירות היסטורית שבה השוכר ('דייר מוגן') משלם סכום ראשוני גבוה ובתמורה מקבל זכות מגורים לכל חייו (ולעיתים גם יורשיו) תמורת דמי שכירות חודשיים נמוכים מאוד."
+            },
+            {
+                term: "דמי שכירות",
+                category: "gen",
+                definition: "התשלום החודשי המשולם על ידי שוכר לבעל נכס תמורת הזכות להשתמש בנכס למגורים או לשימוש אחר, כפי שמוגדר בחוזה שכירות."
+            },
+            {
+                term: "הון עצמי",
+                category: "fin",
+                definition: "הסכום שהרוכש מביא 'מהבית' לצורך עסקת רכישה. זהו ההפרש בין מחיר הנכס לבין סכום ההלוואה (המשכנתא) שהבנק מאשר לתת.",
+                formula: "Property Price - Loan Amount = Equity"
+            },
+            {
+                term: "היתר בנייה",
+                category: "law",
+                definition: "הרישיון החוקי הניתן על ידי הוועדה המקומית לתכנון ובנייה, המאפשר להתחיל בבניית מבנה חדש או בביצוע שינויים במבנה קיים. בנייה ללא היתר נחשבת עבירה פלילית."
+            },
+            {
+                term: "היטל השבחה",
+                category: "law",
+                definition: "תשלום חובה לוועדה המקומית לתכנון ובנייה בגין עליית שווי מקרקעין כתוצאה מאישור תוכנית (כגון תב\"ע) או מתן הקלה. שיעור ההיטל הוא 50% מעליית השווי.",
+                formula: "(Value After Improvement - Value Before) * 50% = Levy"
+            },
+            {
+                term: "הלוואת בלון (Bullett)",
+                category: "fin",
+                definition: "הלוואה שבה הקרן (ולעיתים גם הריבית) אינה משולמת בתשלומים חודשיים, אלא נפרעת בתשלום אחד גדול בסוף התקופה. מתאים ללווים המצפים לסכום כסף עתידי (כגון ממכירת דירה)."
+            },
+            {
+                term: "הערת אזהרה",
+                category: "law",
+                definition: "רישום זמני בטאבו (לשכת רישום המקרקעין) המודיע על קיום התחייבות לביצוע עסקה בנכס. היא מונעת מבעל הנכס לבצע עסקה סותרת (כגון מכירה כפולה) ללא הסכמת הזכאי."
+            },
+            {
+                term: "זיכרון דברים",
+                category: "law",
+                definition: "מסמך משפטי קצר הנחתם לעיתים בין קונה למוכר ומסכם את תנאי העסקה העקרוניים לפני חתימת החוזה המפורט. ברוב המקרים נחשב לחוזה מחייב משפטית לכל דבר ועניין."
+            },
+            {
+                term: "טאבו",
+                category: "law",
+                definition: "כינוי נפוץ ל'לשכת רישום המקרקעין'. זהו המרשם הרשמי של מדינת ישראל שבו רשומות הזכויות בקרקעות ובנכסים. רישום בטאבו מהווה ראיה חותכת לבעלות."
+            },
+            {
+                term: "טופס 4",
+                category: "law",
+                definition: "אישור הניתן על ידי הרשות המקומית בסיום הבנייה, המאשר כי המבנה נבנה בהתאם להיתר הבנייה וכי הוא ראוי למגורים. טופס זה הוא תנאי לחיבור הבית לתשתיות (חשמל, מים)."
+            },
+            {
+                term: "יחס מימון (LTV)",
+                category: "fin",
+                definition: "היחס (באחוזים) בין סכום המשכנתא לבין שווי הנכס הנרכש (או השמאות, הנמוך מביניהם). בנק ישראל מגביל את אחוז המימון המקסימלי (למשל 75% לדירה ראשונה).",
+                formula: "(Loan Amount / Property Value) * 100 = LTV %"
+            },
+            {
+                term: "יזם",
+                category: "gen",
+                definition: "אדם או חברה שמובילים פרויקט בנייה. היזם מאתר קרקע, מגייס מימון, מנהל את הליכי התכנון והרישוי, מתקשר עם קבלן מבצע, ומוכר את היחידות לרוכשים."
+            },
+            {
+                term: "לוח סילוקין שפיצר",
+                category: "fin",
+                definition: "שיטת החזר הלוואה הנפוצה ביותר, שבה ההחזר החודשי (קרן + ריבית) נשאר קבוע לאורך חיי ההלוואה (בהנחה שהריבית לא משתנה), בעוד מרכיב הריבית יורד ומרכיב הקרן עולה עם הזמן."
+            },
+            {
+                term: "ליווי בנקאי (פרויקט)",
+                category: "fin",
+                definition: "שיטת מימון פרויקטים שבה בנק מעמיד אשראי ליזם. הבנק מפקח על התקדמות הפרויקט ומשחרר כספים בהתאם. כספי הרוכשים מופקדים לחשבון נאמנות מיוחד המבטיח את כספם."
+            },
+            {
+                term: "מדד המחירים לצרכן",
+                category: "fin",
+                definition: "מדד המחושב על ידי הלשכה המרכזית לסטטיסטיקה (למ\"ס) ומשקף את השינוי במחירי 'סל מוצרים' ממוצע של משק בית. משכנתאות צמודות מדד מתעדכנות בהתאם לשינוי במדד."
+            },
+            {
+                term: "מדד תשומות הבנייה",
+                category: "fin",
+                definition: "מדד המחושב על ידי הלמ\"ס ומשקף את השינויים בעלויות הבנייה (ברזל, בטון, שכר עובדים). ברכישת דירה מקבלן, יתרת התשלום לרוב מוצמדת למדד זה, מה שעשוי לייקר את הדירה."
+            },
+            {
+                term: "מכתב כוונות",
+                category: "fin",
+                definition: "מסמך שמוציא הבנק של המוכר (אם יש לו משכנתא על הדירה), המפרט את יתרת החוב המדויקת לסילוק והתחייבות של הבנק להסיר את המשכנתא לאחר קבלת התשלום."
+            },
+            {
+                term: "מנהל מקרקעי ישראל (רמ\"י)",
+                category: "law",
+                definition: "כיום נקראת 'רשות מקרקעי ישראל' (רמ\"י). הגוף המנהל את קרקעות המדינה, קק\"ל ורשות הפיתוח (כ-93% מקרקעות המדינה). עסקאות בקרקעות אלו הן לרוב ב'חכירה' ולא ב'בעלות' מלאה."
+            },
+            {
+                term: "מס רכישה",
+                category: "fin",
+                definition: "מס המוטל על רוכש זכות במקרקעין. שיעור המס מדורג ומשתנה בהתאם לשווי הנכס, האם זו דירה יחידה של הרוכש, דירה נוספת (להשקעה), או נכס מסחרי.",
+                formula: "Property Value * Tax Rate (by brackets) = Purchase Tax"
+            },
+            {
+                term: "מס שבח",
+                category: "fin",
+                definition: "מס המוטל על הרווח (השבח הריאלי) שנוצר למוכר בעת מכירת נכס. זהו ההפרש בין מחיר המכירה למחיר הרכישה, בתוספת הוצאות מוכרות ובניכוי פחת.",
+                formula: "(Sale Price - (Purchase Price + Expenses)) * Tax Rate (e.g., 25%) = Capital Gains Tax"
+            },
+            {
+                term: "משכנתא",
+                category: "fin",
+                definition: "הלוואה לטווח ארוך הניתנת בדרך כלל לרכישת נכס, כאשר הנכס עצמו משועבד לבנק כבטוחה להחזר ההלוואה."
+            },
+            {
+                term: "משכנתא הפוכה",
+                category: "fin",
+                definition: "הלוואה הניתנת לבעלי דירה מבוגרים (לרוב 60+) כנגד שיעבוד הנכס, ללא צורך בהחזר חודשי. ההלוואה נפרעת רק בעת מכירת הנכס, עזיבתו או פטירת הלווה."
+            },
+            {
+                term: "נטו (שטח)",
+                category: "gen",
+                definition: "שטח 'רצפה' או 'פנים דירה'. זהו השטח הפנימי של הנכס, ללא קירות חיצוניים וללא שטחים משותפים. לעיתים כולל קירות פנימיים ולעיתים לא ('נטו נטו')."
+            },
+            {
+                term: "נסח טאבו",
+                category: "law",
+                definition: "מסמך רשמי המופק מלשכת רישום המקרקעין (טאבו) ומפרט את כל המידע המשפטי אודות נכס: בעלים, שעבודים (כגון משכנתא), עיקולים, הערות אזהרה וזיקות הנאה."
+            },
+            {
+                term: "ערבות בנקאית",
+                category: "fin",
+                definition: "כתב התחייבות של בנק לשלם לצד שלישי (המוטב) סכום כסף, אם הלקוח (מבקש הערבות) לא יעמוד בהתחייבויותיו. נפוץ בשכירות (כביטחון למשכיר) וברכישת דירה מקבלן (ערבות חוק מכר)."
+            },
+            {
+                term: "פינוי בינוי",
+                category: "gen",
+                definition: "פרויקט התחדשות עירונית רחב היקף (מתחמי) הכולל שינוי תב\"ע, הריסת מספר בניינים ישנים והקמת מתחם מגורים חדש עם מגדלים, שטחי ציבור ותשתיות. שונה מתמ\"א 38/2 בהיקף ובצורך בתוכנית חדשה."
+            },
+            {
+                term: "פרצלציה (חלוקה)",
+                category: "law",
+                definition: "תהליך תכנוני ומשפטי של חלוקת גוש קרקע לחלקות משנה נפרדות. הפרצלציה היא תנאי הכרחי לרישום בית משותף ולרישום הבעלות על שם הרוכשים בטאבו."
+            },
+            {
+                term: "פריסייל (Pre-Sale)",
+                category: "gen",
+                definition: "שלב מוקדם במכירת פרויקט נדל\"ן, עוד לפני קבלת היתר בנייה מלא ('על הנייר') או בתחילת הבנייה. המחירים בשלב זה עשויים להיות נמוכים יותר כדי לעודד מכירות."
+            },
+            {
+                term: "קבוצת רכישה",
+                category: "gen",
+                definition: "התארגנות של קבוצת אנשים פרטיים לרכישת קרקע ובנייה עצמית עליה במשותף, במטרה לחסוך בעלויות (בעיקר את הרווח היזמי). חברי הקבוצה נושאים בסיכונים של הפרויקט."
+            },
+            {
+                term: "ריבית פריים (Prime)",
+                category: "fin",
+                definition: "ריבית בסיסית הנקבעת על ידי הבנקים. בישראל היא מורכבת מריבית בנק ישראל בתוספת מרווח קבוע (כיום 1.5%). משכנתאות רבות צמודות לריבית הפריים."
+            },
+            {
+                term: "שמאות מקרקעין",
+                category: "fin",
+                definition: "הערכת שווי של נכס מקרקעין הנעשית על ידי שמאי מוסמך. השמאות נדרשת על ידי הבנק לצורך אישור משכנתא, וכן לצורך חישוב היטל השבחה או מס שבח."
+            },
+            {
+                term: "תב\"ע (תוכנית בניין עיר)",
+                category: "law",
+                definition: "מסמך סטטוטורי הקובע את ייעודי הקרקע (מה מותר לבנות - מגורים, מסחר, תעשייה), זכויות הבנייה (כמה מותר לבנות - אחוזי בנייה, מספר קומות) ומגבלות נוספות בשטח נתון."
+            },
+            {
+                term: "תמ\"א 38/1 (חיזוק ועיבוי)",
+                category: "law",
+                definition: "מסלול במסגרת תוכנית המתאר הארצית לחיזוק מבנים. הדיירים נשארים לגור בבניין, היזם מחזק את היסודות כנגד רעידות אדמה, מוסיף ממ\"דים ומרפסות, ובתמורה מקבל זכויות לבניית דירות חדשות על הגג."
+            },
+            {
+                term: "תמ\"א 38/2 (הריסה ובנייה)",
+                category: "law",
+                definition: "מסלול שבו הורסים את הבניין הישן ובונים תחתיו בניין חדש. דומה לפינוי-בינוי אך מבוצע לרוב בבניין בודד מכוח תמ\"א 38 (ללא צורך בשינוי תב\"ע מורכב). הדיירים מקבלים דירה חדשה וגדולה יותר."
+            },
+            {
+                term: "תשואה משכירות (Gross Yield)",
+                category: "fin",
+                definition: "הרווח השנתי המתקבל מהשכרת נכס, מבוטא כאחוז ממחיר הנכס. זהו המדד הבסיסי ביותר להשוואת נכסים להשקעה.",
+                formula: "(Monthly Rent * 12) / Property Price = Gross Annual Yield (%)"
+            },
+            {
+                term: "תשואה על ההון (ROE / Cash on Cash)",
+                category: "fin",
+                definition: "מדד מתקדם למשקיעים, הבוחן את הרווח ביחס לכסף שהמשקיע הביא בפועל 'מהבית' (ההון העצמי), ולא ביחס לשווי הכולל של הנכס. משקלל את אפקט המינוף.",
+                formula: "(Annual Cash Flow / Initial Cash Investment) * 100 = ROE %"
+            },
+            {
+                term: "NOI (הכנסה תפעולית נטו)",
+                category: "fin",
+                definition: "מדד קריטי בנדל\"ן מניב. מייצג את ההכנסות מהנכס בניכוי הוצאות תפעוליות שוטפות (ניהול, ביטוח, תחזוקה), אך *לפני* תשלומי ריבית ומס.",
+                formula: "Gross Income - Operating Expenses = NOI"
+            }
+        ];
+
+        const termsContainer = document.getElementById('termsContainer');
+        const searchInput = document.getElementById('searchInput');
+        const filterControls = document.getElementById('filterControls');
+        const noResults = document.getElementById('noResults');
+
+        let currentFilter = 'all';
+        let searchTerm = '';
+
+        // 3. Render Terms
+        const renderTerms = () => {
+            termsContainer.innerHTML = '';
+            let resultsFound = false;
+
+            const filteredTerms = termsData
+                .filter(term => {
+                    const matchesCategory = currentFilter === 'all' || term.category === currentFilter;
+                    const matchesSearch = term.term.includes(searchTerm) || term.definition.includes(searchTerm);
+                    return matchesCategory && matchesSearch;
+                })
+                .sort((a, b) => a.term.localeCompare(b.term, 'he'));
+
+            filteredTerms.forEach((term, index) => {
+                resultsFound = true;
+                let categoryClass = '';
+                let categoryText = '';
+                switch (term.category) {
+                    case 'fin': categoryClass = 'category-fin'; categoryText = 'פיננסי'; break;
+                    case 'law': categoryClass = 'category-law'; categoryText = 'משפטי'; break;
+                    case 'gen': categoryClass = 'category-gen'; categoryText = 'כללי'; break;
+                }
+
+                const termCard = document.createElement('div');
+                termCard.className = 'bg-white p-5 rounded-lg shadow-sm border border-gray-200 relative group hover:shadow-md transition-shadow';
+                termCard.id = `card-${index}`;
+
+                let formulaHtml = term.formula ? `<div class="formula-box">${term.formula}</div>` : '';
+
+                termCard.innerHTML = `
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="text-2xl font-semibold text-blue-800">${term.term}</h3>
+                        <span class="category-badge ${categoryClass}">${categoryText}</span>
+                    </div>
+                    <p class="text-gray-700 text-base leading-relaxed">${term.definition}</p>
+                    ${formulaHtml}
+                    
+                    <div class="mt-4 flex gap-2">
+                         <button onclick="generateExample('${term.term}', '${term.definition.replace(/'/g, "\\'")}', 'card-${index}')" 
+                                 class="text-xs bg-purple-100 text-purple-700 px-3 py-1 rounded-full hover:bg-purple-200 transition-colors flex items-center gap-1">
+                             ✨ דוגמה פרקטית
+                         </button>
+                    </div>
+                    <div id="response-card-${index}" class="hidden"></div>
+                `;
+                termsContainer.appendChild(termCard);
+            });
+
+            noResults.style.display = resultsFound ? 'none' : 'block';
+        };
+
+        // 4. Generate Example Logic (SIMPLIFIED)
+        window.generateExample = async (term, definition, cardId) => {
+            const responseDiv = document.getElementById(`response-${cardId}`);
+            responseDiv.className = "ai-response-box block";
+            responseDiv.innerHTML = `<div class="typing-indicator text-gray-500">Gemini חושב על דוגמה פשוטה</div>`;
+
+            const prompt = `
+                כתוב דוגמה פשוטה מאוד, קצרה וברורה (בגובה העיניים) למונח הנדל"ני: "${term}".
+                הדוגמה צריכה להיות מובנת לכל סטודנט, גם ללא ידע מוקדם.
+                השתמש במספרים עגולים ופשוטים אם צריך.
+                התמקד בסיטואציה יום-יומית בישראל.
+                אורך: עד 2-3 משפטים בלבד.
+                ללא הקדמות, ישר ולעניין.
+            `;
+
+            const response = await callGeminiAPI(prompt);
+            if (response) {
+                responseDiv.innerHTML = `<strong>💡 דוגמה מהשטח:</strong><br>${response}`;
+            } else {
+                responseDiv.className = "hidden";
+            }
+        };
+
+        // 5. Search & Filter Listeners
+        searchInput.addEventListener('keyup', (e) => {
+            searchTerm = e.target.value.trim();
+            renderTerms();
+        });
+
+        filterControls.addEventListener('click', (e) => {
+            if (e.target.tagName === 'BUTTON') {
+                currentFilter = e.target.dataset.filter;
+                document.querySelectorAll('#filterControls .filter-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                    btn.classList.add('bg-gray-200', 'text-gray-800');
+                    btn.classList.remove('bg-blue-600', 'text-white');
+                });
+                e.target.classList.add('active');
+                e.target.classList.remove('bg-gray-200', 'text-gray-800');
+                renderTerms();
+            }
+        });
+
+        // 6. Chat UI Logic
+        const chatModal = document.getElementById('aiChatModal');
+        const chatHistory = document.getElementById('chatHistory');
+        const chatInput = document.getElementById('chatInput');
+        
+        document.getElementById('openChatBtn').onclick = () => chatModal.classList.remove('hidden');
+        document.getElementById('closeChatBtn').onclick = () => chatModal.classList.add('hidden');
+        
+        chatModal.addEventListener('click', (e) => {
+            if (e.target === chatModal) chatModal.classList.add('hidden');
+        });
+
+        async function sendChat() {
+            const text = chatInput.value.trim();
+            if (!text) return;
+
+            // User Msg
+            const userDiv = document.createElement('div');
+            userDiv.className = "bg-blue-600 text-white p-3 rounded-lg shadow-sm self-end text-sm max-w-[85%]";
+            userDiv.textContent = text;
+            chatHistory.appendChild(userDiv);
+            chatInput.value = '';
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+
+            // Loading Msg
+            const loadingDiv = document.createElement('div');
+            loadingDiv.className = "bg-white p-3 rounded-lg shadow-sm self-start text-gray-500 text-sm border border-gray-200 typing-indicator";
+            loadingDiv.textContent = "מקליד";
+            chatHistory.appendChild(loadingDiv);
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+
+            const prompt = `
+                אתה מורה מומחה לנדל"ן בישראל עבור סטודנטים באוניברסיטת רייכמן.
+                ענה על השאלה הבאה בצורה מקצועית, קצרה וברורה בעברית:
+                "${text}"
+            `;
+
+            const response = await callGeminiAPI(prompt);
+            chatHistory.removeChild(loadingDiv);
+
+            if (response) {
+                const aiDiv = document.createElement('div');
+                aiDiv.className = "bg-white p-3 rounded-lg shadow-sm self-start text-gray-800 text-sm border border-gray-200 max-w-[85%]";
+                aiDiv.innerHTML = response.replace(/\n/g, '<br>');
+                chatHistory.appendChild(aiDiv);
+            }
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+        }
+
+        document.getElementById('sendChatBtn').onclick = sendChat;
+        chatInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendChat();
+        });
+
+        // Init
+        renderTerms();
+
+    </script>
+</body>
+</html>
