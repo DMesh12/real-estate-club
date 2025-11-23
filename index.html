@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700&display=swap" rel="stylesheet">
     <!-- Chosen Palette: Royal Blue & Neutrals -->
-    <!-- Updates: Integrated FormSubmit for direct email sending via AJAX -->
+    <!-- Updates: Added AI disclaimer to intro section -->
     <style>
         body {
             font-family: 'Assistant', sans-serif;
@@ -128,7 +128,7 @@
             border-top: 3px solid #1e40af;
             width: 20px;
             height: 20px;
-            -webkit-animation: spin 1s linear infinite; /* Safari */
+            -webkit-animation: spin 1s linear infinite;
             animation: spin 1s linear infinite;
         }
         @keyframes spin {
@@ -142,9 +142,9 @@
     <div class="container mx-auto p-4 md:p-8 max-w-5xl flex flex-col min-h-screen">
 
         <header class="mb-8 relative">
-            <!-- Logo container -->
+            <!-- Logo container: logo.png and h-40 -->
             <div class="absolute top-0 right-0">
-                <img src="logo.jpeg" alt="לוגו מועדון הנדל"ן" class="h-40 w-auto object-contain" onerror="this.style.display='none'">
+                <img src="logo.png" alt="לוגו מועדון הנדל"ן" class="h-40 w-auto object-contain" onerror="this.style.display='none'">
             </div>
             <div class="text-center pt-4 md:pt-0 pr-28 pl-4">
                 <h1 class="text-4xl md:text-5xl font-bold text-blue-800 mb-2">מילון מונחי נדל"ן</h1>
@@ -167,6 +167,8 @@
                 המילון נועד לשמש ככלי עזר לימודי ונגיש, שיסייע לכם להעמיק את הידע ולהבין את השפה המקצועית. אתם יכולים לחפש מונח ספציפי בשורת החיפוש, או לסנן את המונחים לפי קטגוריה.
                 <br>
                 <strong>חדש!</strong> שילבנו בינה מלאכותית (AI) המאפשרת לקבל דוגמאות חיות לכל מונח ולהתייעץ עם מומחה וירטואלי (מותנה בהזנת מפתח API).
+                <br><br>
+                <span class="text-sm text-gray-500 italic">התוכן נכתב בעזרת AI ולכן יתכנו טעויות. מצאתם טעות? כתבו לנו בטופס למטה.</span>
             </p>
         </section>
 
@@ -189,7 +191,7 @@
             לא נמצאו מונחים התואמים את החיפוש.
         </div>
 
-        <!-- Contact Section (FormSubmit Integrated) -->
+        <!-- Contact Section (FormSubmit Integrated with Email and Phone) -->
         <section class="mt-12 mb-8 border-t-2 border-gray-200 pt-8">
             <div class="bg-blue-50 rounded-xl p-6 md:p-8 border border-blue-100">
                 <h2 class="text-2xl font-bold text-blue-800 mb-2 text-center">חסר לכם מונח? מצאתם טעות?</h2>
@@ -203,10 +205,12 @@
                     <input type="hidden" name="_template" value="table">
                     
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <!-- Name -->
                         <div>
                             <label for="senderName" class="block text-sm font-medium text-gray-700 mb-1">שם מלא</label>
                             <input type="text" name="name" id="senderName" required class="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" placeholder="ישראל ישראלי">
                         </div>
+                        <!-- Topic -->
                         <div>
                             <label for="suggestionType" class="block text-sm font-medium text-gray-700 mb-1">נושא הפנייה</label>
                             <select name="topic" id="suggestionType" class="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 bg-white">
@@ -216,7 +220,19 @@
                                 <option value="אחר">אחר</option>
                             </select>
                         </div>
+                        <!-- Email -->
+                        <div>
+                            <label for="senderEmail" class="block text-sm font-medium text-gray-700 mb-1">אימייל לחזרה</label>
+                            <input type="email" name="email" id="senderEmail" required class="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" placeholder="your@email.com">
+                        </div>
+                        <!-- Phone -->
+                        <div>
+                            <label for="senderPhone" class="block text-sm font-medium text-gray-700 mb-1">טלפון (אופציונלי)</label>
+                            <input type="tel" name="phone" id="senderPhone" class="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" placeholder="050-1234567">
+                        </div>
                     </div>
+                    
+                    <!-- Message Body -->
                     <div>
                         <label for="messageBody" class="block text-sm font-medium text-gray-700 mb-1">תוכן ההודעה / המונח המוצע</label>
                         <textarea name="message" id="messageBody" required rows="3" class="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" placeholder="כתבו כאן את המונח, ההסבר, או ההערה שלכם..."></textarea>
