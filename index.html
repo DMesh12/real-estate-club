@@ -7,8 +7,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700&display=swap" rel="stylesheet">
     
-    <!-- Version: 1.4 -->
-    <!-- Changes: Security fixes (XSS), Event Delegation, Robust Error Handling, Accessibility improvements -->
+    <!-- Version: 1.5 -->
+    <!-- Changes: Expanded introduction text, Version update -->
     
     <style>
         body {
@@ -224,7 +224,7 @@
     <div class="container mx-auto p-4 md:p-8 max-w-5xl flex-grow">
 
         <header class="mb-10 relative">
-            <!-- Logo: Fixed quotes in alt attribute -->
+            <!-- Logo -->
             <div class="absolute top-0 right-0 z-10 hidden md:block opacity-90 hover:opacity-100 transition-opacity">
                 <img src="logo.png" alt='לוגו מועדון הנדל"ן' class="h-32 lg:h-40 w-auto object-contain">
             </div>
@@ -264,14 +264,18 @@
 
         <section id="introduction" class="mb-10 bg-white p-8 rounded-2xl shadow-sm text-center border border-slate-100 relative overflow-hidden">
             <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500"></div>
-            <p class="text-slate-600 text-base md:text-lg leading-relaxed max-w-3xl mx-auto">
-                ברוכים הבאים למילון המונחים האינטראקטיבי. המילון מרכז את מונחי היסוד בנדל"ן, פיננסים ומשפט.
-                <br class="hidden md:block"><br class="hidden md:block">
-                <strong>חדש!</strong> היעזרו בבינה המלאכותית (AI) לקבלת דוגמאות מהשטח ולהתייעצות עם המומחה הווירטואלי (מותנה בהזנת מפתח API).
-            </p>
-            <p class="mt-4 text-xs text-slate-400 italic">
-                * התוכן נכתב בסיוע AI ועשוי להכיל אי-דיוקים. נתקלתם בטעות? אנא דווחו לנו בטופס למטה.
-            </p>
+            <div class="relative z-10">
+                <p class="text-slate-600 text-base md:text-lg leading-relaxed max-w-3xl mx-auto">
+                    ברוכים הבאים למילון המונחים האינטראקטיבי של מועדון הנדל"ן. כאן ריכזנו עבורכם את מונחי היסוד המרכזיים בעולם הנדל"ן, הפיננסים והמשפט, הרלוונטיים במיוחד לשוק הישראלי. המילון נועד לשמש ככלי עזר לימודי ונגיש, שיסייע לכם להעמיק את הידע ולהבין את השפה המקצועית.
+                    <br class="hidden md:block"><br class="hidden md:block">
+                    אתם יכולים לחפש מונח ספציפי בשורת החיפוש, או לסנן את המונחים לפי קטגוריה.
+                    <br class="hidden md:block">
+                    <strong>חדש!</strong> שילבנו בינה מלאכותית (AI) המאפשרת לקבל דוגמאות חיות לכל מונח ולהתייעץ עם מומחה וירטואלי (מותנה בהזנת מפתח API).
+                </p>
+                <p class="mt-6 text-xs text-slate-400 italic border-t border-slate-100 pt-4 inline-block px-4">
+                    * התוכן נכתב בסיוע AI ועשוי להכיל אי-דיוקים. נתקלתם בטעות? אנא דווחו לנו בטופס למטה.
+                </p>
+            </div>
         </section>
 
         <div class="sticky top-2 z-30 mb-8">
@@ -348,7 +352,7 @@
         <!-- Footer -->
         <footer class="text-center text-slate-400 text-xs pb-8 font-sans border-t border-slate-100 pt-6 mt-auto">
             <p>Created by Daniel Meshulam &copy; | 052-6548787</p>
-            <p class="mt-1 opacity-70">Version 1.4</p>
+            <p class="mt-1 opacity-70">Version 1.5</p>
         </footer>
     </div>
 
@@ -358,7 +362,6 @@
     </button>
 
     <!-- AI Chat Modal -->
-    <!-- Fix: Added role="dialog" and aria-modal="true" for accessibility -->
     <div id="aiChatModal" role="dialog" aria-modal="true" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md flex flex-col h-[550px] border border-slate-200 overflow-hidden">
             <div class="p-4 bg-slate-50 border-b border-slate-100 flex justify-between items-center">
@@ -371,7 +374,6 @@
                 </div>
                 <button id="closeChatBtn" class="text-slate-400 hover:text-slate-600 text-2xl leading-none">&times;</button>
             </div>
-            <!-- Fix: Added flex flex-col for self-start/end to work -->
             <div id="chatHistory" class="flex-grow p-4 overflow-y-auto space-y-4 bg-white flex flex-col">
                 <div class="bg-slate-50 p-3 rounded-2xl rounded-tr-none self-start text-slate-700 text-sm border border-slate-100 max-w-[85%] shadow-sm">
                     היי! אני מומחה הנדל"ן הווירטואלי שלך. הזנת מפתח API? מעולה, אפשר לשאול אותי הכל!
@@ -423,10 +425,9 @@
     <script>
         // --- Enhanced Utilities ---
 
-        // Toast Notification System
         function showToast(message, type = 'success') {
             const container = document.getElementById('toast-container');
-            if (!container) return; // Defensive check
+            if (!container) return; 
 
             const toast = document.createElement('div');
             toast.className = `toast ${type}`;
@@ -447,7 +448,6 @@
             }, 3000);
         }
 
-        // Secure HTML Sanitization to prevent XSS
         function escapeHtml(text) {
             if (!text) return '';
             return text
@@ -458,30 +458,19 @@
                 .replace(/'/g, "&#039;");
         }
 
-        // Markdown Parser for Gemini (Safe version)
         function formatGeminiResponse(text) {
             if (!text) return '';
             
-            // 1. Sanitize raw text first
             let safeText = escapeHtml(text);
 
-            // 2. Apply formatting rules to sanitized text
-            // Bold: **text** -> <strong>text</strong>
             let formatted = safeText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-            
-            // List items: * or - at start of line
             formatted = formatted.replace(/^[\*\-]\s+(.*)$/gm, '<li>$1</li>');
-            
-            // Line breaks
             formatted = formatted.replace(/\n/g, '<br>');
-            
-            // Cleanup multi-breaks
             formatted = formatted.replace(/(<br>\s*){3,}/g, '<br><br>');
 
             return formatted;
         }
 
-        // Defensive DOM helper
         function safeGetElement(id) {
             const el = document.getElementById(id);
             if (!el) {
@@ -495,7 +484,6 @@
 
         const apiKeyInput = safeGetElement('apiKeyInput');
         let userApiKey = localStorage.getItem('gemini_api_key') || "";
-        
         if(apiKeyInput && userApiKey) apiKeyInput.value = userApiKey;
 
         function saveApiKey() {
@@ -518,7 +506,6 @@
             });
         }
 
-        // Modals handling
         const helpModal = safeGetElement('helpModal');
         const videoModal = safeGetElement('videoModal');
         const aiChatModal = safeGetElement('aiChatModal');
@@ -542,7 +529,6 @@
         if(openChatBtn) openChatBtn.addEventListener('click', () => aiChatModal?.classList.remove('hidden'));
         if(closeChatBtn) closeChatBtn.addEventListener('click', () => aiChatModal?.classList.add('hidden'));
 
-        // Global click for closing modals
         window.addEventListener('click', (e) => {
             if(e.target === helpModal) helpModal.classList.remove('active');
             if(e.target === videoModal) {
@@ -552,7 +538,6 @@
             if(e.target === aiChatModal) aiChatModal.classList.add('hidden');
         });
 
-        // API Call (Robust)
         async function callGeminiAPI(prompt) {
             if (!userApiKey) {
                 showToast('חסר מפתח API. אנא הגדר אותו למעלה', 'error');
@@ -575,8 +560,6 @@
                 }
                 
                 const data = await response.json();
-                
-                // Optional chaining for safety
                 const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
                 
                 if (!text) {
@@ -592,7 +575,6 @@
             }
         }
 
-        // Data
         const termsData = [
              {
                 term: "ארנונה",
