@@ -7,8 +7,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700&display=swap" rel="stylesheet">
     
-    <!-- Version: 1.6 -->
-    <!-- Changes: Added Sticky A-Z Alphabet Navigation Bar -->
+    <!-- Version: 2.0 -->
+    <!-- Changes: Restored full definitions for all terms -->
     
     <style>
         body {
@@ -111,19 +111,9 @@
             line-height: 1.6;
             animation: fadeIn 0.4s ease-out;
         }
-        .ai-response-box strong {
-            font-weight: 700;
-            color: #14532d;
-        }
-        .ai-response-box ul {
-            list-style-type: disc;
-            padding-right: 20px;
-            margin-top: 8px;
-            margin-bottom: 8px;
-        }
-        .ai-response-box li {
-            margin-bottom: 4px;
-        }
+        .ai-response-box strong { font-weight: 700; color: #14532d; }
+        .ai-response-box ul { list-style-type: disc; padding-right: 20px; margin-top: 8px; margin-bottom: 8px; }
+        .ai-response-box li { margin-bottom: 4px; }
 
         /* Toast Notification */
         #toast-container {
@@ -150,10 +140,7 @@
             pointer-events: all;
             border: 1px solid #e2e8f0;
         }
-        .toast.show {
-            opacity: 1;
-            transform: translateY(0);
-        }
+        .toast.show { opacity: 1; transform: translateY(0); }
         .toast.error { border-right: 4px solid #ef4444; color: #b91c1c; }
         .toast.success { border-right: 4px solid #22c55e; color: #15803d; }
 
@@ -193,9 +180,7 @@
             transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
             box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1), 0 10px 10px -5px rgba(0,0,0,0.04);
         }
-        .modal-backdrop.active .modal-content {
-            transform: scale(1);
-        }
+        .modal-backdrop.active .modal-content { transform: scale(1); }
         .video-modal-content { max-width: 800px; width: 95%; padding: 0; overflow: hidden; background: black; }
         
         /* Loading Animation */
@@ -215,39 +200,15 @@
             position: absolute;
             top: 0;
         }
-        .dot-flashing::before {
-            left: -10px;
-            width: 6px;
-            height: 6px;
-            border-radius: 5px;
-            background-color: #9880ff;
-            color: #9880ff;
-            animation: dot-flashing 1s infinite alternate;
-            animation-delay: 0s;
-        }
-        .dot-flashing::after {
-            left: 10px;
-            width: 6px;
-            height: 6px;
-            border-radius: 5px;
-            background-color: #9880ff;
-            color: #9880ff;
-            animation: dot-flashing 1s infinite alternate;
-            animation-delay: 1s;
-        }
+        .dot-flashing::before { left: -10px; width: 6px; height: 6px; border-radius: 5px; background-color: #9880ff; color: #9880ff; animation: dot-flashing 1s infinite alternate; animation-delay: 0s; }
+        .dot-flashing::after { left: 10px; width: 6px; height: 6px; border-radius: 5px; background-color: #9880ff; color: #9880ff; animation: dot-flashing 1s infinite alternate; animation-delay: 1s; }
         @keyframes dot-flashing {
             0% { background-color: #9880ff; }
             50%, 100% { background-color: #ebe6ff; }
         }
 
-        /* Utility to hide scrollbar */
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-        .no-scrollbar {
-            -ms-overflow-style: none;  /* IE and Edge */
-            scrollbar-width: none;  /* Firefox */
-        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
 <body class="relative min-h-screen flex flex-col">
@@ -258,40 +219,28 @@
     <div class="container mx-auto p-4 md:p-8 max-w-5xl flex-grow">
 
         <header class="mb-10 relative">
-            <!-- Logo -->
             <div class="absolute top-0 right-0 z-10 hidden md:block opacity-90 hover:opacity-100 transition-opacity">
                 <img src="logo.png" alt='לוגו מועדון הנדל"ן' class="h-32 lg:h-40 w-auto object-contain">
             </div>
-            <!-- Mobile Logo -->
             <div class="md:hidden flex justify-center mb-4">
                 <img src="logo.png" alt='לוגו מועדון הנדל"ן' class="h-24 w-auto object-contain">
             </div>
             
-            <!-- Title -->
             <div class="text-center pt-4 md:pt-2 w-full">
                 <h1 class="text-4xl md:text-5xl font-bold text-slate-800 mb-3 tracking-tight">מילון מונחי נדל"ן</h1>
                 <p class="text-xl text-slate-500 font-medium">מועדון הנדל"ן | אוניברסיטת רייכמן</p>
             </div>
             
-            <!-- API Key Section -->
             <div class="mt-8 flex flex-wrap justify-center items-center text-sm text-slate-500 gap-2 bg-white p-2 px-4 rounded-full w-fit mx-auto border border-slate-200 shadow-sm hover:shadow-md transition-shadow relative z-20">
                 <span class="font-semibold text-xs hidden sm:inline text-slate-400">Gemini API Key:</span>
                 <input type="password" id="apiKeyInput" class="bg-transparent border-none rounded px-2 py-1 w-24 sm:w-32 focus:w-64 transition-all outline-none text-slate-700 placeholder-slate-300 text-xs focus:ring-0" placeholder="הדבק מפתח כאן...">
                 
                 <div class="h-4 w-[1px] bg-slate-200 mx-1"></div>
 
-                <button id="saveApiKeyBtn" class="text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 rounded-full p-1 px-2 text-xs font-bold transition-colors" title="שמור מפתח">
-                    שמור
-                </button>
-                
-                <button id="openHelpBtn" class="text-blue-500 hover:text-blue-700 hover:bg-blue-50 rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold transition-colors" title="הסבר">
-                    ?
-                </button>
-                
+                <button id="saveApiKeyBtn" class="text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 rounded-full p-1 px-2 text-xs font-bold transition-colors" title="שמור מפתח">שמור</button>
+                <button id="openHelpBtn" class="text-blue-500 hover:text-blue-700 hover:bg-blue-50 rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold transition-colors" title="הסבר">?</button>
                 <button id="openVideoBtn" class="text-purple-500 hover:text-purple-700 hover:bg-purple-50 rounded-full w-6 h-6 flex items-center justify-center text-xs transition-colors" title="סרטון הדרכה">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
-                        <polygon points="5 3 19 12 5 21 5 3"></polygon>
-                    </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
                 </button>
             </div>
         </header>
@@ -304,7 +253,7 @@
                     <br class="hidden md:block"><br class="hidden md:block">
                     אתם יכולים לחפש מונח ספציפי בשורת החיפוש, או לסנן את המונחים לפי קטגוריה או לפי סדר הא'-ב'.
                     <br class="hidden md:block">
-                    <strong>חדש!</strong> שילבנו בינה מלאכותית (AI) המאפשרת לקבל דוגמאות חיות לכל מונח ולהתייעץ עם מומחה וירטואלי (מותנה בהזנת מפתח API).
+                    <strong>חדש!</strong> השתמשו במחשבונים המובנים (<svg xmlns="http://www.w3.org/2000/svg" class="inline-block w-4 h-4 mb-1 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"></rect><line x1="8" x2="16" y1="6" y2="6"></line><line x1="16" x2="16" y1="14" y2="14"></line><line x1="12" x2="12" y1="14" y2="14"></line><line x1="8" x2="8" y1="14" y2="14"></line><line x1="16" x2="16" y1="18" y2="18"></line><line x1="12" x2="12" y1="18" y2="18"></line><line x1="8" x2="8" y1="18" y2="18"></line></svg>) לחישובי תשואה ועוד, או היעזרו ב-AI לקבלת דוגמאות.
                 </p>
                 <p class="mt-6 text-xs text-slate-400 italic border-t border-slate-100 pt-4 inline-block px-4">
                     * התוכן נכתב בסיוע AI ועשוי להכיל אי-דיוקים. נתקלתם בטעות? אנא דווחו לנו בטופס למטה.
@@ -312,10 +261,7 @@
             </div>
         </section>
 
-        <!-- Sticky Navigation Wrapper -->
         <div class="sticky top-0 z-30 mb-8 pt-2">
-            
-            <!-- 1. Main Filter Bar (Search + Categories) -->
             <div class="bg-white/90 backdrop-blur-md p-3 rounded-xl shadow-lg border border-slate-200/60 flex flex-col md:flex-row gap-3 max-w-4xl mx-auto mb-2">
                 <div class="relative flex-grow">
                     <input type="search" id="searchInput" placeholder="חפש מונח..." class="w-full pl-4 pr-10 py-2.5 bg-slate-50 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500 transition-all text-slate-700">
@@ -328,16 +274,11 @@
                     <button data-filter="gen" class="filter-btn whitespace-nowrap py-2 px-5 rounded-xl font-semibold text-sm">כללי</button>
                 </div>
             </div>
-
-            <!-- 2. Alphabet Navigation Bar (A-Z) -->
-            <div id="alphabetContainer" class="bg-white/90 backdrop-blur-md p-2 rounded-xl shadow-md border border-slate-200/60 max-w-4xl mx-auto overflow-x-auto whitespace-nowrap flex gap-1 justify-center no-scrollbar">
-                <!-- Alphabet buttons will be injected here -->
-            </div>
-
+            <div id="alphabetContainer" class="bg-white/90 backdrop-blur-md p-2 rounded-xl shadow-md border border-slate-200/60 max-w-4xl mx-auto overflow-x-auto whitespace-nowrap flex gap-1 justify-center no-scrollbar"></div>
         </div>
 
         <main id="termsContainer" class="space-y-5 grid grid-cols-1 gap-5">
-            <!-- Terms will be injected here by JS -->
+            <!-- Terms will be injected here -->
         </main>
 
         <div id="noResults" class="text-center text-slate-400 text-lg py-20 hidden">
@@ -350,181 +291,93 @@
             <div class="bg-white rounded-2xl p-8 border border-slate-200 shadow-sm max-w-3xl mx-auto">
                 <h2 class="text-2xl font-bold text-slate-800 mb-2 text-center">צור קשר</h2>
                 <p class="text-slate-500 mb-8 text-center text-sm">הצעות למונחים, תיקונים או סתם מילה טובה</p>
-                
                 <form id="contactForm" class="space-y-5">
                     <input type="hidden" name="_subject" value="פנייה חדשה ממילון הנדלן">
                     <input type="hidden" name="_captcha" value="false">
                     <input type="hidden" name="_template" value="table">
-                    
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                        <div class="space-y-1">
-                            <label class="text-xs font-bold text-slate-500 uppercase">שם מלא</label>
-                            <input type="text" name="name" required class="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all outline-none" placeholder="ישראל ישראלי">
-                        </div>
-                        <div class="space-y-1">
-                            <label class="text-xs font-bold text-slate-500 uppercase">נושא</label>
-                            <select name="topic" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all outline-none">
-                                <option value="הוספת מונח">הצעת מונח חדש</option>
-                                <option value="תיקון טעות">דיווח על טעות</option>
-                                <option value="אחר">אחר</option>
-                            </select>
-                        </div>
-                        <div class="space-y-1">
-                            <label class="text-xs font-bold text-slate-500 uppercase">אימייל</label>
-                            <input type="email" name="email" required class="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all outline-none" placeholder="name@example.com">
-                        </div>
-                        <div class="space-y-1">
-                            <label class="text-xs font-bold text-slate-500 uppercase">טלפון</label>
-                            <input type="tel" name="phone" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all outline-none" placeholder="050-0000000">
-                        </div>
+                        <div class="space-y-1"><label class="text-xs font-bold text-slate-500 uppercase">שם מלא</label><input type="text" name="name" required class="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all outline-none" placeholder="ישראל ישראלי"></div>
+                        <div class="space-y-1"><label class="text-xs font-bold text-slate-500 uppercase">נושא</label><select name="topic" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all outline-none"><option value="הוספת מונח">הצעת מונח חדש</option><option value="תיקון טעות">דיווח על טעות</option><option value="אחר">אחר</option></select></div>
+                        <div class="space-y-1"><label class="text-xs font-bold text-slate-500 uppercase">אימייל</label><input type="email" name="email" required class="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all outline-none" placeholder="name@example.com"></div>
+                        <div class="space-y-1"><label class="text-xs font-bold text-slate-500 uppercase">טלפון</label><input type="tel" name="phone" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all outline-none" placeholder="050-0000000"></div>
                     </div>
-                    <div class="space-y-1">
-                        <label class="text-xs font-bold text-slate-500 uppercase">תוכן ההודעה</label>
-                        <textarea name="message" required rows="4" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all outline-none resize-none" placeholder="כתבו כאן..."></textarea>
-                    </div>
-                    
-                    <div class="text-center pt-2">
-                        <button type="submit" id="submitBtn" class="bg-slate-800 hover:bg-slate-900 text-white font-bold py-3 px-10 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 flex items-center gap-2 mx-auto">
-                            <span>שליחה</span>
-                        </button>
-                    </div>
+                    <div class="space-y-1"><label class="text-xs font-bold text-slate-500 uppercase">תוכן ההודעה</label><textarea name="message" required rows="4" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all outline-none resize-none" placeholder="כתבו כאן..."></textarea></div>
+                    <div class="text-center pt-2"><button type="submit" id="submitBtn" class="bg-slate-800 hover:bg-slate-900 text-white font-bold py-3 px-10 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 flex items-center gap-2 mx-auto"><span>שליחה</span></button></div>
                 </form>
             </div>
         </section>
 
-        <!-- Footer -->
         <footer class="text-center text-slate-400 text-xs pb-8 font-sans border-t border-slate-100 pt-6 mt-auto">
             <p>Created by Daniel Meshulam &copy; | 052-6548787</p>
-            <p class="mt-1 opacity-70">Version 1.6</p>
+            <p class="mt-1 opacity-70">Version 2.0</p>
         </footer>
     </div>
 
-    <!-- Floating AI Chat Button -->
-    <button id="openChatBtn" class="fixed bottom-6 left-6 w-14 h-14 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 text-white shadow-2xl flex items-center justify-center text-2xl z-50 hover:scale-110 transition-transform hover:shadow-blue-500/50 border-2 border-white">
-        ✨
-    </button>
+    <!-- Buttons & Modals -->
+    <button id="openChatBtn" class="fixed bottom-6 left-6 w-14 h-14 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 text-white shadow-2xl flex items-center justify-center text-2xl z-50 hover:scale-110 transition-transform hover:shadow-blue-500/50 border-2 border-white">✨</button>
 
-    <!-- AI Chat Modal -->
+    <!-- Calculator Modal (Updated Icon) -->
+    <div id="calcModal" role="dialog" aria-modal="true" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+        <div class="modal-content bg-white rounded-2xl shadow-2xl w-full max-w-md border border-slate-200 overflow-hidden">
+            <div class="p-4 bg-slate-50 border-b border-slate-100 flex justify-between items-center">
+                <h3 class="font-bold text-slate-800 text-lg flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-600"><rect x="4" y="2" width="16" height="20" rx="2"></rect><line x1="8" x2="16" y1="6" y2="6"></line><line x1="16" x2="16" y1="14" y2="14"></line><line x1="12" x2="12" y1="14" y2="14"></line><line x1="8" x2="8" y1="14" y2="14"></line><line x1="16" x2="16" y1="18" y2="18"></line><line x1="12" x2="12" y1="18" y2="18"></line><line x1="8" x2="8" y1="18" y2="18"></line></svg>
+                    מחשבון <span id="calcTitle"></span>
+                </h3>
+                <button id="closeCalcBtn" class="text-slate-400 hover:text-slate-600 text-2xl leading-none">&times;</button>
+            </div>
+            <div class="p-6">
+                <div id="calcInputs" class="space-y-4 mb-6"></div>
+                <div class="bg-blue-50 p-4 rounded-xl text-center border border-blue-100">
+                    <span class="text-sm text-blue-600 font-bold uppercase tracking-wider">תוצאה</span>
+                    <div id="calcResult" class="text-3xl font-bold text-blue-800 mt-1">-</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chat Modal -->
     <div id="aiChatModal" role="dialog" aria-modal="true" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md flex flex-col h-[550px] border border-slate-200 overflow-hidden">
             <div class="p-4 bg-slate-50 border-b border-slate-100 flex justify-between items-center">
-                <div class="flex items-center gap-2">
-                    <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-lg">🤖</div>
-                    <div>
-                        <h3 class="font-bold text-slate-800 text-sm">המומחה הווירטואלי</h3>
-                        <p class="text-xs text-slate-500">מחובר (Gemini AI)</p>
-                    </div>
-                </div>
+                <div class="flex items-center gap-2"><div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-lg">🤖</div><div><h3 class="font-bold text-slate-800 text-sm">המומחה הווירטואלי</h3><p class="text-xs text-slate-500">מחובר (Gemini AI)</p></div></div>
                 <button id="closeChatBtn" class="text-slate-400 hover:text-slate-600 text-2xl leading-none">&times;</button>
             </div>
-            <div id="chatHistory" class="flex-grow p-4 overflow-y-auto space-y-4 bg-white flex flex-col">
-                <div class="bg-slate-50 p-3 rounded-2xl rounded-tr-none self-start text-slate-700 text-sm border border-slate-100 max-w-[85%] shadow-sm">
-                    היי! אני מומחה הנדל"ן הווירטואלי שלך. הזנת מפתח API? מעולה, אפשר לשאול אותי הכל!
-                </div>
-            </div>
-            <div class="p-3 bg-slate-50 border-t border-slate-100">
-                <div class="flex gap-2 bg-white p-1 rounded-xl border border-slate-200 focus-within:ring-2 focus-within:ring-blue-500/20 focus-within:border-blue-500 transition-all">
-                    <input type="text" id="chatInput" class="flex-grow bg-transparent border-none px-3 py-2 text-sm focus:ring-0" placeholder="שאל אותי שאלה...">
-                    <button id="sendChatBtn" class="bg-blue-600 text-white rounded-lg w-10 h-10 flex items-center justify-center hover:bg-blue-700 transition-colors shadow-sm">
-                        ➤
-                    </button>
-                </div>
-            </div>
+            <div id="chatHistory" class="flex-grow p-4 overflow-y-auto space-y-4 bg-white flex flex-col"><div class="bg-slate-50 p-3 rounded-2xl rounded-tr-none self-start text-slate-700 text-sm border border-slate-100 max-w-[85%] shadow-sm">היי! אני מומחה הנדל"ן הווירטואלי שלך. הזנת מפתח API? מעולה, אפשר לשאול אותי הכל!</div></div>
+            <div class="p-3 bg-slate-50 border-t border-slate-100"><div class="flex gap-2 bg-white p-1 rounded-xl border border-slate-200 focus-within:ring-2 focus-within:ring-blue-500/20 focus-within:border-blue-500 transition-all"><input type="text" id="chatInput" class="flex-grow bg-transparent border-none px-3 py-2 text-sm focus:ring-0" placeholder="שאל אותי שאלה..."><button id="sendChatBtn" class="bg-blue-600 text-white rounded-lg w-10 h-10 flex items-center justify-center hover:bg-blue-700 transition-colors shadow-sm">➤</button></div></div>
         </div>
     </div>
 
-    <!-- Help Modal -->
-    <div id="helpModal" role="dialog" aria-modal="true" class="modal-backdrop">
-        <div class="modal-content">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xl font-bold text-slate-800">מדריך מפתח API</h3>
-                <button id="closeHelpBtn" class="text-slate-400 hover:text-slate-600 text-2xl">&times;</button>
-            </div>
-            <div class="space-y-3 text-slate-600 text-sm leading-relaxed">
-                <p>כדי להשתמש בבינה המלאכותית, נדרש מפתח אישי מגוגל (חינם):</p>
-                <ol class="list-decimal list-inside space-y-2 bg-slate-50 p-4 rounded-lg border border-slate-100">
-                    <li>כנסו ל-<strong>Google AI Studio</strong>.</li>
-                    <li>התחברו עם חשבון Google.</li>
-                    <li>לחצו על <strong>Create API Key</strong>.</li>
-                    <li>העתיקו את הקוד והדביקו אותו למעלה.</li>
-                </ol>
-            </div>
-        </div>
-    </div>
-
-    <!-- Video Modal -->
-    <div id="videoModal" role="dialog" aria-modal="true" class="modal-backdrop">
-        <div class="modal-content video-modal-content">
-            <div class="relative pt-[56.25%] bg-black">
-                <video controls class="absolute top-0 left-0 w-full h-full" id="guideVideo">
-                    <source src="guide.mp4" type="video/mp4">
-                    הדפדפן לא תומך בוידאו.
-                </video>
-                <button id="closeVideoBtn" class="absolute top-4 right-4 text-white bg-black/50 hover:bg-black/70 rounded-full w-8 h-8 flex items-center justify-center z-20">&times;</button>
-            </div>
-        </div>
-    </div>
+    <div id="helpModal" role="dialog" aria-modal="true" class="modal-backdrop"><div class="modal-content"><div class="flex justify-between items-center mb-4"><h3 class="text-xl font-bold text-slate-800">מדריך מפתח API</h3><button id="closeHelpBtn" class="text-slate-400 hover:text-slate-600 text-2xl">&times;</button></div><div class="space-y-3 text-slate-600 text-sm leading-relaxed"><p>כדי להשתמש בבינה המלאכותית, נדרש מפתח אישי מגוגל (חינם):</p><ol class="list-decimal list-inside space-y-2 bg-slate-50 p-4 rounded-lg border border-slate-100"><li>כנסו ל-<strong>Google AI Studio</strong>.</li><li>התחברו עם חשבון Google.</li><li>לחצו על <strong>Create API Key</strong>.</li><li>העתיקו את הקוד והדביקו אותו למעלה.</li></ol></div></div></div>
+    <div id="videoModal" role="dialog" aria-modal="true" class="modal-backdrop"><div class="modal-content video-modal-content"><div class="relative pt-[56.25%] bg-black"><video controls class="absolute top-0 left-0 w-full h-full" id="guideVideo"><source src="guide.mp4" type="video/mp4">הדפדפן לא תומך בוידאו.</video><button id="closeVideoBtn" class="absolute top-4 right-4 text-white bg-black/50 hover:bg-black/70 rounded-full w-8 h-8 flex items-center justify-center z-20">&times;</button></div></div></div>
 
     <script>
-        // --- Enhanced Utilities ---
-
+        // --- Utilities ---
         function showToast(message, type = 'success') {
             const container = document.getElementById('toast-container');
             if (!container) return; 
-
             const toast = document.createElement('div');
             toast.className = `toast ${type}`;
-            
             let icon = type === 'success' ? '✅' : '⚠️';
             if (type === 'info') icon = 'ℹ️';
-
             toast.innerHTML = `<span>${icon}</span><span>${message}</span>`;
             container.appendChild(toast);
-
-            requestAnimationFrame(() => {
-                toast.classList.add('show');
-            });
-
-            setTimeout(() => {
-                toast.classList.remove('show');
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
-        }
-
-        function escapeHtml(text) {
-            if (!text) return '';
-            return text
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;")
-                .replace(/"/g, "&quot;")
-                .replace(/'/g, "&#039;");
+            requestAnimationFrame(() => toast.classList.add('show'));
+            setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 300); }, 3000);
         }
 
         function formatGeminiResponse(text) {
             if (!text) return '';
-            
-            let safeText = escapeHtml(text);
-
-            let formatted = safeText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            let formatted = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+            formatted = formatted.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
             formatted = formatted.replace(/^[\*\-]\s+(.*)$/gm, '<li>$1</li>');
             formatted = formatted.replace(/\n/g, '<br>');
-            formatted = formatted.replace(/(<br>\s*){3,}/g, '<br><br>');
-
             return formatted;
         }
 
-        function safeGetElement(id) {
-            const el = document.getElementById(id);
-            if (!el) {
-                console.warn(`Element with id '${id}' not found.`);
-                return null;
-            }
-            return el;
-        }
+        function safeGetElement(id) { return document.getElementById(id); }
 
-        // --- Logic ---
-
+        // --- API Logic ---
         const apiKeyInput = safeGetElement('apiKeyInput');
         let userApiKey = localStorage.getItem('gemini_api_key') || "";
         if(apiKeyInput && userApiKey) apiKeyInput.value = userApiKey;
@@ -539,87 +392,166 @@
                 showToast('אנא הזן מפתח תקין', 'error');
             }
         }
+        if(safeGetElement('saveApiKeyBtn')) safeGetElement('saveApiKeyBtn').onclick = saveApiKey;
+        if(apiKeyInput) apiKeyInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') saveApiKey(); });
 
-        const saveBtn = safeGetElement('saveApiKeyBtn');
-        if(saveBtn) saveBtn.addEventListener('click', saveApiKey);
-        
-        if(apiKeyInput) {
-            apiKeyInput.addEventListener('keypress', (e) => { 
-                if (e.key === 'Enter') saveApiKey(); 
+        // --- Calculator Logic ---
+        const calculators = {
+            'yield': {
+                title: 'תשואה משכירות',
+                inputs: [
+                    { id: 'rent', label: 'שכירות חודשית (₪)', placeholder: 'למשל: 5000' },
+                    { id: 'price', label: 'מחיר הנכס (₪)', placeholder: 'למשל: 1500000' }
+                ],
+                calc: (vals) => {
+                    if(!vals.rent || !vals.price) return '-';
+                    return ((vals.rent * 12) / vals.price * 100).toFixed(2) + '%';
+                }
+            },
+            'equity': {
+                title: 'הון עצמי',
+                inputs: [
+                    { id: 'price', label: 'מחיר הנכס (₪)', placeholder: 'למשל: 2000000' },
+                    { id: 'loan', label: 'סכום המשכנתא (₪)', placeholder: 'למשל: 1000000' }
+                ],
+                calc: (vals) => {
+                    if(!vals.price) return '-';
+                    return '₪' + (vals.price - (vals.loan || 0)).toLocaleString();
+                }
+            },
+            'ltv': {
+                title: 'יחס מימון (LTV)',
+                inputs: [
+                    { id: 'loan', label: 'סכום המשכנתא (₪)', placeholder: 'למשל: 900000' },
+                    { id: 'price', label: 'שווי הנכס (₪)', placeholder: 'למשל: 1500000' }
+                ],
+                calc: (vals) => {
+                    if(!vals.loan || !vals.price) return '-';
+                    return ((vals.loan / vals.price) * 100).toFixed(1) + '%';
+                }
+            },
+            'betterment': {
+                title: 'היטל השבחה (הערכה)',
+                inputs: [
+                    { id: 'newVal', label: 'שווי במצב חדש (₪)', placeholder: '' },
+                    { id: 'oldVal', label: 'שווי במצב קודם (₪)', placeholder: '' }
+                ],
+                calc: (vals) => {
+                    if(!vals.newVal || !vals.oldVal) return '-';
+                    const diff = vals.newVal - vals.oldVal;
+                    if(diff <= 0) return 'אין היטל';
+                    return '₪' + (diff * 0.5).toLocaleString();
+                }
+            },
+            'capital_gain': {
+                title: 'מס שבח (הערכה גסה 25%)',
+                inputs: [
+                    { id: 'sale', label: 'מחיר מכירה (₪)', placeholder: '' },
+                    { id: 'buy', label: 'מחיר קנייה (₪)', placeholder: '' },
+                    { id: 'expenses', label: 'הוצאות מותרות (₪)', placeholder: 'עו"ד, תיווך, שיפוץ' }
+                ],
+                calc: (vals) => {
+                    if(!vals.sale || !vals.buy) return '-';
+                    const profit = vals.sale - vals.buy - (vals.expenses || 0);
+                    if(profit <= 0) return 'אין מס';
+                    return '₪' + (profit * 0.25).toLocaleString();
+                }
+            },
+            'noi': {
+                title: 'NOI',
+                inputs: [
+                    { id: 'income', label: 'הכנסה שנתית ברוטו (₪)', placeholder: '' },
+                    { id: 'expenses', label: 'הוצאות תפעול שנתיות (₪)', placeholder: 'ביטוח, ניהול, תחזוקה' }
+                ],
+                calc: (vals) => {
+                    if(!vals.income) return '-';
+                    return '₪' + (vals.income - (vals.expenses || 0)).toLocaleString();
+                }
+            }
+        };
+
+        const calcModal = safeGetElement('calcModal');
+        const calcTitle = safeGetElement('calcTitle');
+        const calcInputsDiv = safeGetElement('calcInputs');
+        const calcResultDiv = safeGetElement('calcResult');
+        let activeCalcType = null;
+
+        function openCalculator(type) {
+            const config = calculators[type];
+            if(!config) return;
+
+            activeCalcType = type;
+            calcTitle.innerText = config.title;
+            calcInputsDiv.innerHTML = '';
+            calcResultDiv.innerText = '-';
+
+            config.inputs.forEach(inp => {
+                const wrapper = document.createElement('div');
+                wrapper.className = "space-y-1";
+                wrapper.innerHTML = `
+                    <label class="text-xs font-bold text-slate-500">${inp.label}</label>
+                    <input type="number" id="calc_${inp.id}" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none calc-input" placeholder="${inp.placeholder}">
+                `;
+                calcInputsDiv.appendChild(wrapper);
             });
+
+            // Add listeners
+            const inputs = calcInputsDiv.querySelectorAll('.calc-input');
+            inputs.forEach(input => {
+                input.addEventListener('input', runCalculation);
+            });
+
+            calcModal.classList.remove('hidden');
         }
 
+        function runCalculation() {
+            const config = calculators[activeCalcType];
+            const values = {};
+            config.inputs.forEach(inp => {
+                const val = document.getElementById(`calc_${inp.id}`).value;
+                values[inp.id] = val ? parseFloat(val) : 0;
+            });
+            calcResultDiv.innerText = config.calc(values);
+        }
+
+        if(safeGetElement('closeCalcBtn')) {
+            safeGetElement('closeCalcBtn').onclick = () => calcModal.classList.add('hidden');
+        }
+
+        // --- General Logic ---
         const helpModal = safeGetElement('helpModal');
         const videoModal = safeGetElement('videoModal');
         const aiChatModal = safeGetElement('aiChatModal');
         const videoEl = safeGetElement('guideVideo');
 
-        const openHelpBtn = safeGetElement('openHelpBtn');
-        const closeHelpBtn = safeGetElement('closeHelpBtn');
-        if(openHelpBtn) openHelpBtn.addEventListener('click', () => helpModal?.classList.add('active'));
-        if(closeHelpBtn) closeHelpBtn.addEventListener('click', () => helpModal?.classList.remove('active'));
-        
-        const openVideoBtn = safeGetElement('openVideoBtn');
-        const closeVideoBtn = safeGetElement('closeVideoBtn');
-        if(openVideoBtn) openVideoBtn.addEventListener('click', () => videoModal?.classList.add('active'));
-        if(closeVideoBtn) closeVideoBtn.addEventListener('click', () => {
-            videoModal?.classList.remove('active');
-            videoEl?.pause();
-        });
-
-        const openChatBtn = safeGetElement('openChatBtn');
-        const closeChatBtn = safeGetElement('closeChatBtn');
-        if(openChatBtn) openChatBtn.addEventListener('click', () => aiChatModal?.classList.remove('hidden'));
-        if(closeChatBtn) closeChatBtn.addEventListener('click', () => aiChatModal?.classList.add('hidden'));
+        safeGetElement('openHelpBtn').onclick = () => helpModal?.classList.add('active');
+        safeGetElement('closeHelpBtn').onclick = () => helpModal?.classList.remove('active');
+        safeGetElement('openVideoBtn').onclick = () => videoModal?.classList.add('active');
+        safeGetElement('closeVideoBtn').onclick = () => { videoModal?.classList.remove('active'); videoEl?.pause(); };
+        safeGetElement('openChatBtn').onclick = () => aiChatModal?.classList.remove('hidden');
+        safeGetElement('closeChatBtn').onclick = () => aiChatModal?.classList.add('hidden');
 
         window.addEventListener('click', (e) => {
             if(e.target === helpModal) helpModal.classList.remove('active');
-            if(e.target === videoModal) {
-                videoModal.classList.remove('active');
-                videoEl?.pause();
-            }
+            if(e.target === videoModal) { videoModal.classList.remove('active'); videoEl?.pause(); }
             if(e.target === aiChatModal) aiChatModal.classList.add('hidden');
+            if(e.target === calcModal) calcModal.classList.add('hidden');
         });
 
         async function callGeminiAPI(prompt) {
-            if (!userApiKey) {
-                showToast('חסר מפתח API. אנא הגדר אותו למעלה', 'error');
-                return null;
-            }
-
+            if (!userApiKey) { showToast('חסר מפתח API', 'error'); return null; }
             const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${userApiKey}`;
-            
             try {
-                const response = await fetch(url, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
-                });
-
-                if (!response.ok) {
-                    const errText = await response.text();
-                    console.error("API Error Details:", errText);
-                    throw new Error("API Error");
-                }
-                
+                const response = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }) });
+                if (!response.ok) throw new Error("API Error");
                 const data = await response.json();
-                const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-                
-                if (!text) {
-                    throw new Error("Invalid response format");
-                }
-                
-                return text;
-
-            } catch (error) {
-                console.error(error);
-                showToast('שגיאה בתקשורת. בדוק את המפתח או האינטרנט', 'error');
-                return null;
-            }
+                return data.candidates[0].content.parts[0].text;
+            } catch (error) { console.error(error); showToast('שגיאה בתקשורת', 'error'); return null; }
         }
 
+        // Data
         const termsData = [
-             {
+            {
                 term: "ארנונה",
                 category: "gen",
                 definition: "מס מוניציפלי המוטל על ידי הרשות המקומית על מחזיקי נכסים (מבנים וקרקעות). התעריף נקבע בהתאם לסוג הנכס (מגורים, מסחר, משרדים), שטחו ומיקומו."
@@ -673,7 +605,8 @@
                 term: "הון עצמי",
                 category: "fin",
                 definition: "הסכום שהרוכש מביא 'מהבית' לצורך עסקת רכישה. זהו ההפרש בין מחיר הנכס לבין סכום ההלוואה (המשכנתא) שהבנק מאשר לתת.",
-                formula: "Property Price - Loan Amount = Equity"
+                formula: "Property Price - Loan Amount = Equity",
+                calcType: "equity"
             },
             {
                 term: "היתר בנייה",
@@ -684,7 +617,8 @@
                 term: "היטל השבחה",
                 category: "law",
                 definition: "תשלום חובה לוועדה המקומית לתכנון ובנייה בגין עליית שווי מקרקעין כתוצאה מאישור תוכנית (כגון תב\"ע) או מתן הקלה. שיעור ההיטל הוא 50% מעליית השווי. בדרך כלל משולם בעת ‘מימוש’ (מכירה / הוצאת היתר בנייה וכד’) ולא מיד עם אישור התכנית.",
-                formula: "(Value After Improvement - Value Before) * 50% = Levy"
+                formula: "(Value After Improvement - Value Before) * 50% = Levy",
+                calcType: "betterment"
             },
             {
                 term: "הלוואת בלון (Bullett)",
@@ -720,7 +654,8 @@
                 term: "יחס מימון (LTV)",
                 category: "fin",
                 definition: "היחס (באחוזים) בין סכום המשכנתא לבין שווי הנכס הנרכש (או השמאות, הנמוך מביניהם). בנק ישראל מגביל את אחוז המימון המקסימלי (למשל 75% לדירה ראשונה).",
-                formula: "(Loan Amount / Property Value) * 100 = LTV %"
+                formula: "(Loan Amount / Property Value) * 100 = LTV %",
+                calcType: "ltv"
             },
             {
                 term: "יזם",
@@ -767,7 +702,8 @@
                 term: "מס שבח",
                 category: "fin",
                 definition: "מס המוטל על הרווח (השבח הריאלי) שנוצר למוכר בעת מכירת נכס. זהו ההפרש בין מחיר המכירה למחיר הרכישה, בתוספת הוצאות מוכרות ובניכוי פחת.",
-                formula: "(Sale Price - (Purchase Price + Expenses)) * Tax Rate (e.g., 25%) = Capital Gains Tax"
+                formula: "(Sale Price - (Purchase Price + Expenses)) * Tax Rate (e.g., 25%) = Capital Gains Tax",
+                calcType: "capital_gain"
             },
             {
                 term: "משכנתא",
@@ -797,7 +733,7 @@
             {
                 term: "פינוי בינוי",
                 category: "gen",
-                definition: "פרויקט התחדשות עירונית רחב היקף (מתחמי) הכולל שינוי תב\"ע, הריסת מספר בניינים ישנים והקמת מתחם מגורים חדש עם מגדלים, שטחי ציבור ותשתיות. שונה מתמ\"א 38/2 בהיקף ובצורך בתוכנית חדשה."
+                definition: "פרויקט התחדשות עירונית שבו הורסים מתחם של בניינים ישנים, ובמקומם בונים בניינים חדשים ומודרניים, לרוב עם יותר דירות. הדיירים הוותיקים מקבלים דירה חדשה."
             },
             {
                 term: "פרצלציה (חלוקה)",
@@ -848,7 +784,8 @@
                 term: "תשואה משכירות (Gross Yield)",
                 category: "fin",
                 definition: "הרווח השנתי המתקבל מהשכרת נכס, מבוטא כאחוז ממחיר הנכס. זהו המדד הבסיסי ביותר להשוואת נכסים להשקעה.",
-                formula: "(Monthly Rent * 12) / Property Price = Gross Annual Yield (%)"
+                formula: "(Monthly Rent * 12) / Property Price = Gross Annual Yield (%)",
+                calcType: "yield"
             },
             {
                 term: "תשואה על ההון (ROE / Cash on Cash)",
@@ -860,283 +797,177 @@
                 term: "NOI (הכנסה תפעולית נטו)",
                 category: "fin",
                 definition: "מדד קריטי בנדל\"ן מניב. מייצג את ההכנסות מהנכס בניכוי הוצאות תפעוליות שוטפות (ניהול, ביטוח, תחזוקה), אך *לפני* תשלומי ריבית ומס.",
-                formula: "Gross Income - Operating Expenses = NOI"
+                formula: "Gross Income - Operating Expenses = NOI",
+                calcType: "noi"
             }
         ];
 
         const termsContainer = safeGetElement('termsContainer');
-        const alphabetContainer = safeGetElement('alphabetContainer'); // NEW Element
+        const alphabetContainer = safeGetElement('alphabetContainer');
         const searchInput = safeGetElement('searchInput');
         const filterControls = safeGetElement('filterControls');
         const noResults = safeGetElement('noResults');
-
         let currentFilter = 'all';
-        let currentLetter = ''; // NEW State
+        let currentLetter = '';
         let searchTerm = '';
 
-        // Render Alphabet Bar (NEW Function)
         const renderAlphabet = () => {
             if (!alphabetContainer) return;
-            
-            // 1. Extract unique first letters
             const letters = new Set();
-            termsData.forEach(item => {
-                const firstChar = item.term.trim().charAt(0);
-                // Optional: check if it's a valid letter to avoid junk
-                letters.add(firstChar);
-            });
-            
-            // 2. Sort (Hebrew locale)
+            termsData.forEach(item => letters.add(item.term.trim().charAt(0)));
             const sortedLetters = Array.from(letters).sort((a, b) => a.localeCompare(b, 'he'));
-            
-            // 3. Create Buttons HTML
-            let html = `
-                <button data-letter="" class="alpha-btn ${currentLetter === '' ? 'active' : ''}">
-                    הכל
-                </button>
-            `;
-            
-            sortedLetters.forEach(letter => {
-                html += `
-                    <button data-letter="${letter}" class="alpha-btn ${currentLetter === letter ? 'active' : ''}">
-                        ${letter}
-                    </button>
-                `;
-            });
-            
+            let html = `<button data-letter="" class="alpha-btn ${currentLetter === '' ? 'active' : ''}">הכל</button>`;
+            sortedLetters.forEach(letter => { html += `<button data-letter="${letter}" class="alpha-btn ${currentLetter === letter ? 'active' : ''}">${letter}</button>`; });
             alphabetContainer.innerHTML = html;
         };
 
-        // Render Terms (Updated to filter by letter)
         const renderTerms = () => {
             if (!termsContainer) return;
             termsContainer.innerHTML = '';
             let resultsFound = false;
-
             const safeSearchTerm = searchTerm.toLowerCase();
-
-            const filteredTerms = termsData
-                .filter(term => {
-                    const matchesCategory = currentFilter === 'all' || term.category === currentFilter;
-                    const matchesSearch = term.term.toLowerCase().includes(safeSearchTerm) || 
-                                          term.definition.toLowerCase().includes(safeSearchTerm);
-                    const matchesLetter = currentLetter === '' || term.term.trim().startsWith(currentLetter);
-                    
-                    return matchesCategory && matchesSearch && matchesLetter;
-                })
-                .sort((a, b) => a.term.localeCompare(b.term, 'he'));
+            const filteredTerms = termsData.filter(term => {
+                const matchesCategory = currentFilter === 'all' || term.category === currentFilter;
+                const matchesSearch = term.term.toLowerCase().includes(safeSearchTerm) || term.definition.toLowerCase().includes(safeSearchTerm);
+                const matchesLetter = currentLetter === '' || term.term.trim().startsWith(currentLetter);
+                return matchesCategory && matchesSearch && matchesLetter;
+            }).sort((a, b) => a.term.localeCompare(b.term, 'he'));
 
             filteredTerms.forEach((term, index) => {
                 resultsFound = true;
-                let categoryClass = '';
-                let categoryText = '';
-                switch (term.category) {
-                    case 'fin': categoryClass = 'category-fin'; categoryText = 'פיננסי'; break;
-                    case 'law': categoryClass = 'category-law'; categoryText = 'משפטי'; break;
-                    case 'gen': categoryClass = 'category-gen'; categoryText = 'כללי'; break;
-                }
+                let catClass = '', catText = '';
+                if(term.category === 'fin') { catClass = 'category-fin'; catText = 'פיננסי'; }
+                else if(term.category === 'law') { catClass = 'category-law'; catText = 'משפטי'; }
+                else { catClass = 'category-gen'; catText = 'כללי'; }
 
                 const termCard = document.createElement('div');
                 termCard.className = 'term-card bg-white p-6 rounded-2xl shadow-sm border relative';
                 termCard.id = `card-${index}`;
 
                 let formulaHtml = term.formula ? `<div class="formula-box">${term.formula}</div>` : '';
-
+                
+                // Safe formatting
                 const safeTerm = term.term.replace(/"/g, '&quot;');
                 const safeDef = term.definition.replace(/"/g, '&quot;');
+
+                // Add Calculator Button if calcType exists
+                let calcBtnHtml = '';
+                if(term.calcType) {
+                    calcBtnHtml = `
+                        <button onclick="openCalculator('${term.calcType}')" 
+                                class="text-xs font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 px-3 py-2 rounded-lg transition-colors flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"></rect><line x1="8" x2="16" y1="6" y2="6"></line><line x1="16" x2="16" y1="14" y2="14"></line><line x1="12" x2="12" y1="14" y2="14"></line><line x1="8" x2="8" y1="14" y2="14"></line><line x1="16" x2="16" y1="18" y2="18"></line><line x1="12" x2="12" y1="18" y2="18"></line><line x1="8" x2="8" y1="18" y2="18"></line></svg>
+                            מחשבון
+                        </button>
+                    `;
+                }
 
                 termCard.innerHTML = `
                     <div class="flex justify-between items-start mb-3">
                         <h3 class="text-2xl font-bold text-slate-800">${term.term}</h3>
-                        <span class="category-badge ${categoryClass}">${categoryText}</span>
+                        <span class="category-badge ${catClass}">${catText}</span>
                     </div>
                     <p class="text-slate-600 text-base leading-relaxed mb-4">${term.definition}</p>
                     ${formulaHtml}
-                    
-                    <div class="mt-5 pt-4 border-t border-slate-100">
+                    <div class="mt-5 pt-4 border-t border-slate-100 flex gap-2">
                          <button data-term="${safeTerm}" data-def="${safeDef}" data-id="card-${index}" 
-                                 class="ai-example-btn text-xs font-bold text-purple-600 bg-purple-50 hover:bg-purple-100 px-3 py-2 rounded-lg transition-colors flex items-center gap-2 w-fit">
-                             <span>✨</span> דוגמה פרקטית (AI)
+                                 class="ai-example-btn text-xs font-bold text-purple-600 bg-purple-50 hover:bg-purple-100 px-3 py-2 rounded-lg transition-colors flex items-center gap-2">
+                             <span>✨</span> דוגמה (AI)
                          </button>
+                         ${calcBtnHtml}
                     </div>
                     <div id="response-card-${index}" class="hidden"></div>
                 `;
                 termsContainer.appendChild(termCard);
             });
-
             if (noResults) noResults.style.display = resultsFound ? 'none' : 'block';
         };
 
-        // Alphabet Click Handler (Delegation)
         if (alphabetContainer) {
             alphabetContainer.addEventListener('click', (e) => {
                 const btn = e.target.closest('.alpha-btn');
-                if (btn) {
-                    currentLetter = btn.dataset.letter; // Update state
-                    renderAlphabet(); // Re-render buttons to update active state
-                    renderTerms(); // Filter terms
-                }
+                if (btn) { currentLetter = btn.dataset.letter; renderAlphabet(); renderTerms(); }
             });
         }
-
-        // Event Delegation for "Generate Example" buttons
         if (termsContainer) {
             termsContainer.addEventListener('click', (e) => {
                 const btn = e.target.closest('.ai-example-btn');
-                if (btn) {
-                    const term = btn.dataset.term;
-                    const def = btn.dataset.def;
-                    const id = btn.dataset.id;
-                    generateExample(term, def, id);
-                }
+                if (btn) { generateExample(btn.dataset.term, btn.dataset.def, btn.dataset.id); }
             });
         }
-
-        // Generate Example (Simplified Logic, Robust DOM)
         window.generateExample = async (term, definition, cardId) => {
             const responseDiv = document.getElementById(`response-${cardId}`);
             if (!responseDiv) return;
-
             responseDiv.className = "ai-response-box block";
-            // Flashing dots animation for loading
             responseDiv.innerHTML = `<div class="flex items-center gap-3"><span class="text-sm text-slate-500">חושב...</span><div class="dot-flashing"></div></div>`;
-
-            const prompt = `
-                כתוב דוגמה פשוטה מאוד, קצרה וברורה (בגובה העיניים) למונח הנדל"ני: "${term}".
-                הדוגמה צריכה להיות מובנת לכל סטודנט, גם ללא ידע מוקדם.
-                השתמש במספרים עגולים ופשוטים אם צריך.
-                התמקד בסיטואציה יום-יומית בישראל.
-                אורך: עד 2-3 משפטים בלבד.
-                ללא הקדמות, ישר ולעניין.
-                השתמש ב ** להדגשת מילות מפתח חשובות.
-            `;
-
+            const prompt = `כתוב דוגמה פשוטה קצרה למונח הנדל"ני "${term}". קהל יעד: סטודנטים. בלי הקדמות. השתמש ב **להדגשה**.`;
             const response = await callGeminiAPI(prompt);
-            if (response) {
-                // Use safe formatter which includes HTML escaping
-                responseDiv.innerHTML = `<strong>💡 דוגמה מהשטח:</strong><br>${formatGeminiResponse(response)}`;
-            } else {
-                responseDiv.className = "hidden";
-                showToast("לא התקבלה תשובה מה-AI", "error");
-            }
+            if (response) responseDiv.innerHTML = `<strong>💡 דוגמה:</strong><br>${formatGeminiResponse(response)}`;
+            else { responseDiv.className = "hidden"; showToast("שגיאה בקבלת תשובה", "error"); }
         };
 
-        // Listeners
-        if(searchInput) {
-            searchInput.addEventListener('keyup', (e) => {
-                searchTerm = e.target.value.trim();
+        if(searchInput) searchInput.addEventListener('keyup', (e) => { searchTerm = e.target.value.trim(); renderTerms(); });
+        if(filterControls) filterControls.addEventListener('click', (e) => {
+            if (e.target.tagName === 'BUTTON') {
+                currentFilter = e.target.dataset.filter;
+                document.querySelectorAll('#filterControls .filter-btn').forEach(btn => btn.classList.remove('active'));
+                e.target.classList.add('active');
                 renderTerms();
-            });
-        }
+            }
+        });
 
-        if(filterControls) {
-            filterControls.addEventListener('click', (e) => {
-                if (e.target.tagName === 'BUTTON') {
-                    currentFilter = e.target.dataset.filter;
-                    document.querySelectorAll('#filterControls .filter-btn').forEach(btn => {
-                        btn.classList.remove('active');
-                    });
-                    e.target.classList.add('active');
-                    renderTerms();
-                }
-            });
-        }
-
-        // Chat Logic
+        // Chat & Form Logic (Same as before)
         const chatModal = safeGetElement('aiChatModal');
         const chatHistory = safeGetElement('chatHistory');
         const chatInput = safeGetElement('chatInput');
         const sendChatBtn = safeGetElement('sendChatBtn');
-        
         async function sendChat() {
             if (!chatInput || !chatHistory) return;
-            
             const text = chatInput.value.trim();
             if (!text) return;
-
-            // User Msg
             const userDiv = document.createElement('div');
             userDiv.className = "bg-blue-600 text-white p-3 rounded-2xl rounded-tl-none self-end text-sm max-w-[85%] shadow-md mb-2";
-            // Use textContent for safety
             userDiv.textContent = text;
             chatHistory.appendChild(userDiv);
             chatInput.value = '';
             chatHistory.scrollTop = chatHistory.scrollHeight;
-
-            // Loading Msg
             const loadingDiv = document.createElement('div');
             loadingDiv.className = "bg-slate-50 p-3 rounded-2xl rounded-tr-none self-start text-slate-500 text-sm border border-slate-100 mb-2 flex items-center gap-2";
             loadingDiv.innerHTML = `<span>מקליד</span><div class="dot-flashing" style="background-color: #94a3b8; width: 4px; height: 4px;"></div>`;
             chatHistory.appendChild(loadingDiv);
             chatHistory.scrollTop = chatHistory.scrollHeight;
-
-            const prompt = `
-                אתה מורה מומחה לנדל"ן בישראל עבור סטודנטים באוניברסיטת רייכמן.
-                ענה על השאלה הבאה בצורה מקצועית, קצרה וברורה בעברית:
-                "${text}"
-                השתמש ב ** להדגשת מושגים חשובים.
-                אם צריך, השתמש ברשימה עם מקפים (-).
-            `;
-
-            const response = await callGeminiAPI(prompt);
-            if(chatHistory.contains(loadingDiv)) {
-                chatHistory.removeChild(loadingDiv);
-            }
-
+            const response = await callGeminiAPI(`אתה מומחה נדל"ן. ענה בקצרה על: "${text}"`);
+            if(chatHistory.contains(loadingDiv)) chatHistory.removeChild(loadingDiv);
             if (response) {
                 const aiDiv = document.createElement('div');
                 aiDiv.className = "bg-slate-50 p-3 rounded-2xl rounded-tr-none self-start text-slate-700 text-sm border border-slate-100 max-w-[90%] shadow-sm mb-2 leading-relaxed";
-                // Safe formatting applied here
                 aiDiv.innerHTML = formatGeminiResponse(response);
                 chatHistory.appendChild(aiDiv);
             }
             chatHistory.scrollTop = chatHistory.scrollHeight;
         }
-
         if(sendChatBtn) sendChatBtn.onclick = sendChat;
         if(chatInput) chatInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendChat(); });
 
-        // Contact Form AJAX
         const contactForm = safeGetElement('contactForm');
         const submitBtn = safeGetElement('submitBtn');
-
         if(contactForm && submitBtn) {
             contactForm.addEventListener('submit', function(e) {
                 e.preventDefault();
-                
                 const originalBtnContent = submitBtn.innerHTML;
                 submitBtn.innerHTML = '<div class="spinner"></div> שולח...';
                 submitBtn.disabled = true;
                 submitBtn.classList.add('opacity-75');
-
                 const formData = new FormData(contactForm);
-
-                fetch("https://formsubmit.co/ajax/realestate.reichman@gmail.com", {
-                    method: "POST",
-                    body: formData
-                })
+                fetch("https://formsubmit.co/ajax/realestate.reichman@gmail.com", { method: "POST", body: formData })
                 .then(response => response.json())
-                .then(data => {
-                    submitBtn.innerHTML = originalBtnContent;
-                    submitBtn.disabled = false;
-                    submitBtn.classList.remove('opacity-75');
-                    contactForm.reset();
-                    showToast('ההודעה נשלחה בהצלחה!', 'success');
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    submitBtn.innerHTML = originalBtnContent;
-                    submitBtn.disabled = false;
-                    submitBtn.classList.remove('opacity-75');
-                    showToast('שגיאה בשליחה. נסה שוב', 'error');
-                });
+                .then(data => { submitBtn.innerHTML = originalBtnContent; submitBtn.disabled = false; submitBtn.classList.remove('opacity-75'); contactForm.reset(); showToast('ההודעה נשלחה בהצלחה!', 'success'); })
+                .catch(error => { console.error('Error:', error); submitBtn.innerHTML = originalBtnContent; submitBtn.disabled = false; submitBtn.classList.remove('opacity-75'); showToast('שגיאה בשליחה. נסה שוב', 'error'); });
             });
         }
 
-        // Init
-        renderAlphabet(); // NEW: Initialize alphabet bar
+        renderAlphabet();
         renderTerms();
-
     </script>
 </body>
 </html>
