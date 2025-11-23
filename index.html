@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700&display=swap" rel="stylesheet">
     <!-- Chosen Palette: Royal Blue & Neutrals -->
-    <!-- Updates: Added Footer with Creator Credit. -->
+    <!-- Updates: Integrated FormSubmit for direct email sending via AJAX -->
     <style>
         body {
             font-family: 'Assistant', sans-serif;
@@ -120,6 +120,21 @@
         .modal-backdrop.active .modal-content {
             transform: translateY(0);
         }
+        
+        /* Loading Spinner */
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 3px solid #1e40af;
+            width: 20px;
+            height: 20px;
+            -webkit-animation: spin 1s linear infinite; /* Safari */
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body class="bg-gray-50 relative">
@@ -129,7 +144,7 @@
         <header class="mb-8 relative">
             <!-- Logo container -->
             <div class="absolute top-0 right-0">
-                <img src="logo.png" alt="לוגו מועדון הנדל"ן" class="h-40 w-auto object-contain" onerror="this.style.display='none'">
+                <img src="logo.jpeg" alt="לוגו מועדון הנדל"ן" class="h-24 w-auto object-contain" onerror="this.style.display='none'">
             </div>
             <div class="text-center pt-4 md:pt-0 pr-28 pl-4">
                 <h1 class="text-4xl md:text-5xl font-bold text-blue-800 mb-2">מילון מונחי נדל"ן</h1>
@@ -174,21 +189,27 @@
             לא נמצאו מונחים התואמים את החיפוש.
         </div>
 
-        <!-- Contact Section -->
+        <!-- Contact Section (FormSubmit Integrated) -->
         <section class="mt-12 mb-8 border-t-2 border-gray-200 pt-8">
             <div class="bg-blue-50 rounded-xl p-6 md:p-8 border border-blue-100">
                 <h2 class="text-2xl font-bold text-blue-800 mb-2 text-center">חסר לכם מונח? מצאתם טעות?</h2>
                 <p class="text-gray-700 mb-6 text-center">אנחנו תמיד שואפים להשתפר ולהרחיב את המאגר. נשמח לקבל מכם הצעות למונחים חדשים או הערות לשיפור.</p>
                 
+                <!-- The Form -->
                 <form id="contactForm" class="space-y-4">
+                    <!-- Config Fields for FormSubmit -->
+                    <input type="hidden" name="_subject" value="פנייה חדשה ממילון הנדלן">
+                    <input type="hidden" name="_captcha" value="false">
+                    <input type="hidden" name="_template" value="table">
+                    
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label for="senderName" class="block text-sm font-medium text-gray-700 mb-1">שם מלא</label>
-                            <input type="text" id="senderName" class="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" placeholder="ישראל ישראלי">
+                            <input type="text" name="name" id="senderName" required class="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" placeholder="ישראל ישראלי">
                         </div>
                         <div>
                             <label for="suggestionType" class="block text-sm font-medium text-gray-700 mb-1">נושא הפנייה</label>
-                            <select id="suggestionType" class="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 bg-white">
+                            <select name="topic" id="suggestionType" class="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 bg-white">
                                 <option value="הוספת מונח חדש">הצעה להוספת מונח חדש</option>
                                 <option value="תיקון טעות">דיווח על טעות</option>
                                 <option value="הצעה לשיפור">הצעה כללית לשיפור</option>
@@ -198,11 +219,20 @@
                     </div>
                     <div>
                         <label for="messageBody" class="block text-sm font-medium text-gray-700 mb-1">תוכן ההודעה / המונח המוצע</label>
-                        <textarea id="messageBody" rows="3" class="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" placeholder="כתבו כאן את המונח, ההסבר, או ההערה שלכם..."></textarea>
+                        <textarea name="message" id="messageBody" required rows="3" class="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500" placeholder="כתבו כאן את המונח, ההסבר, או ההערה שלכם..."></textarea>
                     </div>
+                    
+                    <!-- Feedback Messages -->
+                    <div id="formSuccess" class="hidden text-center p-3 bg-green-100 text-green-700 rounded-lg">
+                        ההודעה נשלחה בהצלחה! תודה רבה.
+                    </div>
+                    <div id="formError" class="hidden text-center p-3 bg-red-100 text-red-700 rounded-lg">
+                        אירעה שגיאה בשליחת ההודעה. אנא נסו שוב מאוחר יותר.
+                    </div>
+
                     <div class="text-center">
-                        <button type="submit" class="bg-blue-700 hover:bg-blue-800 text-white font-bold py-2 px-8 rounded-lg transition-colors shadow-md">
-                            שליחת הצעה
+                        <button type="submit" id="submitBtn" class="bg-blue-700 hover:bg-blue-800 text-white font-bold py-2 px-8 rounded-lg transition-colors shadow-md flex items-center gap-2 mx-auto justify-center">
+                            <span>שליחת הצעה</span>
                         </button>
                     </div>
                 </form>
@@ -340,15 +370,45 @@
 
         // --- UI Logic ---
 
-        // 1. Contact Form
-        document.getElementById('contactForm').addEventListener('submit', function(e) {
+        // 1. Direct Form Submission using FormSubmit AJAX
+        const contactForm = document.getElementById('contactForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const formSuccess = document.getElementById('formSuccess');
+        const formError = document.getElementById('formError');
+
+        contactForm.addEventListener('submit', function(e) {
             e.preventDefault();
-            const name = document.getElementById('senderName').value;
-            const type = document.getElementById('suggestionType').value;
-            const body = document.getElementById('messageBody').value;
-            const subject = encodeURIComponent(`מילון נדל"ן - ${type}`);
-            const emailBody = encodeURIComponent(`שלום לצוות מועדון הנדל"ן,\n\nשם השולח: ${name}\nנושא: ${type}\n\nתוכן ההודעה:\n${body}\n\n--------------------------------\nנשלח דרך מילון המונחים האינטראקטיבי`);
-            window.location.href = `mailto:realestate.reichman@gmail.com?subject=${subject}&body=${emailBody}`;
+            
+            // UI Loading State
+            const originalBtnContent = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<div class="spinner"></div> שולח...';
+            submitBtn.disabled = true;
+            submitBtn.classList.add('opacity-75');
+            formSuccess.classList.add('hidden');
+            formError.classList.add('hidden');
+
+            const formData = new FormData(contactForm);
+
+            fetch("https://formsubmit.co/ajax/realestate.reichman@gmail.com", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                submitBtn.innerHTML = originalBtnContent;
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('opacity-75');
+                contactForm.reset();
+                formSuccess.classList.remove('hidden');
+                setTimeout(() => formSuccess.classList.add('hidden'), 5000);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                submitBtn.innerHTML = originalBtnContent;
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('opacity-75');
+                formError.classList.remove('hidden');
+            });
         });
 
         // 2. Data
