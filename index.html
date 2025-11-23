@@ -7,14 +7,14 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700&display=swap" rel="stylesheet">
     
-    <!-- Version: 1.2 -->
-    <!-- Changes: Improved formatting (Markdown parsing), Softer visuals, Toast notifications for errors -->
+    <!-- Version: 1.4 -->
+    <!-- Changes: Security fixes (XSS), Event Delegation, Robust Error Handling, Accessibility improvements -->
     
     <style>
         body {
             font-family: 'Assistant', sans-serif;
-            background-color: #f8fafc; /* Slate-50: Softer background */
-            color: #334155; /* Slate-700: Softer text than pure black */
+            background-color: #f8fafc; /* Slate-50 */
+            color: #334155; /* Slate-700 */
         }
         
         /* Card Styling */
@@ -29,8 +29,8 @@
         }
 
         .formula-box {
-            background-color: #eff6ff; /* Blue-50 */
-            border-right: 4px solid #2563eb; /* Blue-600 */
+            background-color: #eff6ff;
+            border-right: 4px solid #2563eb;
             padding: 16px;
             border-radius: 8px;
             font-family: 'Courier New', Courier, monospace;
@@ -59,7 +59,7 @@
             border: 1px solid transparent;
         }
         .filter-btn.active {
-            background-color: #2563eb; /* Royal Blue */
+            background-color: #2563eb;
             color: white;
             box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
         }
@@ -76,7 +76,7 @@
         
         /* AI Response Formatting */
         .ai-response-box {
-            background-color: #f0fdf4; /* Green-50ish for success feel */
+            background-color: #f0fdf4;
             border: 1px solid #bbf7d0;
             border-radius: 12px;
             padding: 16px;
@@ -144,7 +144,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(15, 23, 42, 0.6); /* Darker slate overlay */
+            background-color: rgba(15, 23, 42, 0.6);
             backdrop-filter: blur(4px);
             display: flex;
             align-items: center;
@@ -224,13 +224,13 @@
     <div class="container mx-auto p-4 md:p-8 max-w-5xl flex-grow">
 
         <header class="mb-10 relative">
-            <!-- Logo -->
+            <!-- Logo: Fixed quotes in alt attribute -->
             <div class="absolute top-0 right-0 z-10 hidden md:block opacity-90 hover:opacity-100 transition-opacity">
-                <img src="logo.png" alt="לוגו מועדון הנדל"ן" class="h-32 lg:h-40 w-auto object-contain">
+                <img src="logo.png" alt='לוגו מועדון הנדל"ן' class="h-32 lg:h-40 w-auto object-contain">
             </div>
             <!-- Mobile Logo -->
             <div class="md:hidden flex justify-center mb-4">
-                <img src="logo.png" alt="לוגו מועדון הנדל"ן" class="h-24 w-auto object-contain">
+                <img src="logo.png" alt='לוגו מועדון הנדל"ן' class="h-24 w-auto object-contain">
             </div>
             
             <!-- Title -->
@@ -290,7 +290,7 @@
         </div>
 
         <main id="termsContainer" class="space-y-5 grid grid-cols-1 gap-5">
-            <!-- Terms will be injected here -->
+            <!-- Terms will be injected here by JS -->
         </main>
 
         <div id="noResults" class="text-center text-slate-400 text-lg py-20 hidden">
@@ -348,7 +348,7 @@
         <!-- Footer -->
         <footer class="text-center text-slate-400 text-xs pb-8 font-sans border-t border-slate-100 pt-6 mt-auto">
             <p>Created by Daniel Meshulam &copy; | 052-6548787</p>
-            <p class="mt-1 opacity-70">Version 1.2</p>
+            <p class="mt-1 opacity-70">Version 1.4</p>
         </footer>
     </div>
 
@@ -358,7 +358,8 @@
     </button>
 
     <!-- AI Chat Modal -->
-    <div id="aiChatModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+    <!-- Fix: Added role="dialog" and aria-modal="true" for accessibility -->
+    <div id="aiChatModal" role="dialog" aria-modal="true" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
         <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md flex flex-col h-[550px] border border-slate-200 overflow-hidden">
             <div class="p-4 bg-slate-50 border-b border-slate-100 flex justify-between items-center">
                 <div class="flex items-center gap-2">
@@ -370,7 +371,8 @@
                 </div>
                 <button id="closeChatBtn" class="text-slate-400 hover:text-slate-600 text-2xl leading-none">&times;</button>
             </div>
-            <div id="chatHistory" class="flex-grow p-4 overflow-y-auto space-y-4 bg-white">
+            <!-- Fix: Added flex flex-col for self-start/end to work -->
+            <div id="chatHistory" class="flex-grow p-4 overflow-y-auto space-y-4 bg-white flex flex-col">
                 <div class="bg-slate-50 p-3 rounded-2xl rounded-tr-none self-start text-slate-700 text-sm border border-slate-100 max-w-[85%] shadow-sm">
                     היי! אני מומחה הנדל"ן הווירטואלי שלך. הזנת מפתח API? מעולה, אפשר לשאול אותי הכל!
                 </div>
@@ -386,9 +388,8 @@
         </div>
     </div>
 
-    <!-- Help & Video Modals are handled via standard JS alerts or simple popups to keep code clean, reused structures below -->
     <!-- Help Modal -->
-    <div id="helpModal" class="modal-backdrop">
+    <div id="helpModal" role="dialog" aria-modal="true" class="modal-backdrop">
         <div class="modal-content">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="text-xl font-bold text-slate-800">מדריך מפתח API</h3>
@@ -407,7 +408,7 @@
     </div>
 
     <!-- Video Modal -->
-    <div id="videoModal" class="modal-backdrop">
+    <div id="videoModal" role="dialog" aria-modal="true" class="modal-backdrop">
         <div class="modal-content video-modal-content">
             <div class="relative pt-[56.25%] bg-black">
                 <video controls class="absolute top-0 left-0 w-full h-full" id="guideVideo">
@@ -422,9 +423,11 @@
     <script>
         // --- Enhanced Utilities ---
 
-        // 1. Toast Notification System
+        // Toast Notification System
         function showToast(message, type = 'success') {
             const container = document.getElementById('toast-container');
+            if (!container) return; // Defensive check
+
             const toast = document.createElement('div');
             toast.className = `toast ${type}`;
             
@@ -434,7 +437,6 @@
             toast.innerHTML = `<span>${icon}</span><span>${message}</span>`;
             container.appendChild(toast);
 
-            // Trigger animation
             requestAnimationFrame(() => {
                 toast.classList.add('show');
             });
@@ -445,41 +447,59 @@
             }, 3000);
         }
 
-        // 2. Markdown Parser for Gemini
+        // Secure HTML Sanitization to prevent XSS
+        function escapeHtml(text) {
+            if (!text) return '';
+            return text
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        // Markdown Parser for Gemini (Safe version)
         function formatGeminiResponse(text) {
             if (!text) return '';
             
-            // Protect HTML entities first (basic)
-            let formatted = text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+            // 1. Sanitize raw text first
+            let safeText = escapeHtml(text);
 
+            // 2. Apply formatting rules to sanitized text
             // Bold: **text** -> <strong>text</strong>
-            formatted = formatted.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            let formatted = safeText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
             
-            // Bold: *text* -> <strong>text</strong> (sometimes Gemini uses single asterisks)
-            // Be careful not to break lists. Regex looks for * not followed by space, or surrounded by spaces
-            
-            // Lists: * item or - item at start of line
+            // List items: * or - at start of line
             formatted = formatted.replace(/^[\*\-]\s+(.*)$/gm, '<li>$1</li>');
             
-            // Wrap li in ul (Simple heuristic: if we have li's, wrap the whole block? 
-            // Better: just style li's to look good even without ul parent for this simple usage)
-            // Or strictly replace newlines with <br>
-            
+            // Line breaks
             formatted = formatted.replace(/\n/g, '<br>');
             
-            // Clean up double breaks
+            // Cleanup multi-breaks
             formatted = formatted.replace(/(<br>\s*){3,}/g, '<br><br>');
 
             return formatted;
         }
 
+        // Defensive DOM helper
+        function safeGetElement(id) {
+            const el = document.getElementById(id);
+            if (!el) {
+                console.warn(`Element with id '${id}' not found.`);
+                return null;
+            }
+            return el;
+        }
+
         // --- Logic ---
 
-        const apiKeyInput = document.getElementById('apiKeyInput');
+        const apiKeyInput = safeGetElement('apiKeyInput');
         let userApiKey = localStorage.getItem('gemini_api_key') || "";
-        if(userApiKey) apiKeyInput.value = userApiKey;
+        
+        if(apiKeyInput && userApiKey) apiKeyInput.value = userApiKey;
 
         function saveApiKey() {
+            if (!apiKeyInput) return;
             userApiKey = apiKeyInput.value.trim();
             if (userApiKey) {
                 localStorage.setItem('gemini_api_key', userApiKey);
@@ -489,34 +509,50 @@
             }
         }
 
-        document.getElementById('saveApiKeyBtn').onclick = saveApiKey;
-        apiKeyInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') saveApiKey(); });
-
-        // Modals
-        const helpModal = document.getElementById('helpModal');
-        document.getElementById('openHelpBtn').onclick = () => helpModal.classList.add('active');
-        document.getElementById('closeHelpBtn').onclick = () => helpModal.classList.remove('active');
+        const saveBtn = safeGetElement('saveApiKeyBtn');
+        if(saveBtn) saveBtn.addEventListener('click', saveApiKey);
         
-        const videoModal = document.getElementById('videoModal');
-        const videoEl = document.getElementById('guideVideo');
-        document.getElementById('openVideoBtn').onclick = () => videoModal.classList.add('active');
-        document.getElementById('closeVideoBtn').onclick = () => {
-            videoModal.classList.remove('active');
-            videoEl.pause();
-        };
+        if(apiKeyInput) {
+            apiKeyInput.addEventListener('keypress', (e) => { 
+                if (e.key === 'Enter') saveApiKey(); 
+            });
+        }
 
-        window.onclick = (e) => {
+        // Modals handling
+        const helpModal = safeGetElement('helpModal');
+        const videoModal = safeGetElement('videoModal');
+        const aiChatModal = safeGetElement('aiChatModal');
+        const videoEl = safeGetElement('guideVideo');
+
+        const openHelpBtn = safeGetElement('openHelpBtn');
+        const closeHelpBtn = safeGetElement('closeHelpBtn');
+        if(openHelpBtn) openHelpBtn.addEventListener('click', () => helpModal?.classList.add('active'));
+        if(closeHelpBtn) closeHelpBtn.addEventListener('click', () => helpModal?.classList.remove('active'));
+        
+        const openVideoBtn = safeGetElement('openVideoBtn');
+        const closeVideoBtn = safeGetElement('closeVideoBtn');
+        if(openVideoBtn) openVideoBtn.addEventListener('click', () => videoModal?.classList.add('active'));
+        if(closeVideoBtn) closeVideoBtn.addEventListener('click', () => {
+            videoModal?.classList.remove('active');
+            videoEl?.pause();
+        });
+
+        const openChatBtn = safeGetElement('openChatBtn');
+        const closeChatBtn = safeGetElement('closeChatBtn');
+        if(openChatBtn) openChatBtn.addEventListener('click', () => aiChatModal?.classList.remove('hidden'));
+        if(closeChatBtn) closeChatBtn.addEventListener('click', () => aiChatModal?.classList.add('hidden'));
+
+        // Global click for closing modals
+        window.addEventListener('click', (e) => {
             if(e.target === helpModal) helpModal.classList.remove('active');
             if(e.target === videoModal) {
                 videoModal.classList.remove('active');
-                videoEl.pause();
+                videoEl?.pause();
             }
-            if(e.target === document.getElementById('aiChatModal')) {
-                document.getElementById('aiChatModal').classList.add('hidden');
-            }
-        };
+            if(e.target === aiChatModal) aiChatModal.classList.add('hidden');
+        });
 
-        // API Call
+        // API Call (Robust)
         async function callGeminiAPI(prompt) {
             if (!userApiKey) {
                 showToast('חסר מפתח API. אנא הגדר אותו למעלה', 'error');
@@ -532,9 +568,23 @@
                     body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
                 });
 
-                if (!response.ok) throw new Error("API Error");
+                if (!response.ok) {
+                    const errText = await response.text();
+                    console.error("API Error Details:", errText);
+                    throw new Error("API Error");
+                }
+                
                 const data = await response.json();
-                return data.candidates[0].content.parts[0].text;
+                
+                // Optional chaining for safety
+                const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+                
+                if (!text) {
+                    throw new Error("Invalid response format");
+                }
+                
+                return text;
+
             } catch (error) {
                 console.error(error);
                 showToast('שגיאה בתקשורת. בדוק את המפתח או האינטרנט', 'error');
@@ -542,7 +592,7 @@
             }
         }
 
-        // Render Terms
+        // Data
         const termsData = [
              {
                 term: "ארנונה",
@@ -608,7 +658,7 @@
             {
                 term: "היטל השבחה",
                 category: "law",
-                definition: "תשלום חובה לוועדה המקומית לתכנון ובנייה בגין עליית שווי מקרקעין כתוצאה מאישור תוכנית (כגון תב\"ע) או מתן הקלה. שיעור ההיטל הוא 50% מעליית השווי.",
+                definition: "תשלום חובה לוועדה המקומית לתכנון ובנייה בגין עליית שווי מקרקעין כתוצאה מאישור תוכנית (כגון תב\"ע) או מתן הקלה. שיעור ההיטל הוא 50% מעליית השווי. בדרך כלל משולם בעת ‘מימוש’ (מכירה / הוצאת היתר בנייה וכד’) ולא מיד עם אישור התכנית.",
                 formula: "(Value After Improvement - Value Before) * 50% = Levy"
             },
             {
@@ -625,6 +675,11 @@
                 term: "זיכרון דברים",
                 category: "law",
                 definition: "מסמך משפטי קצר הנחתם לעיתים בין קונה למוכר ומסכם את תנאי העסקה העקרוניים לפני חתימת החוזה המפורט. ברוב המקרים נחשב לחוזה מחייב משפטית לכל דבר ועניין."
+            },
+            {
+                term: "זיקת הנאה",
+                category: "law",
+                definition: "זכות קניינית במקרקעין המעניקה לאדם (או לנכס מסוים) זכות לשימוש מסוים במקרקעין של אחר, ללא זכות להחזיק בהם (למשל: זכות מעבר בדרך שבשטח השכן)."
             },
             {
                 term: "טאבו",
@@ -740,6 +795,11 @@
                 definition: "ריבית בסיסית הנקבעת על ידי הבנקים. בישראל היא מורכבת מריבית בנק ישראל בתוספת מרווח קבוע (כיום 1.5%). משכנתאות רבות צמודות לריבית הפריים."
             },
             {
+                term: "שינויי דיירים",
+                category: "gen",
+                definition: "תהליך שבו רוכש דירה חדשה מקבלן מבקש לבצע שינויים או שדרוגים במפרט הסטנדרטי של הדירה (כגון הזזת קירות, נקודות חשמל, שדרוג מטבח), לרוב בתוספת תשלום."
+            },
+            {
                 term: "שמאות מקרקעין",
                 category: "fin",
                 definition: "הערכת שווי של נכס מקרקעין הנעשית על ידי שמאי מוסמך. השמאות נדרשת על ידי הבנק לצורך אישור משכנתא, וכן לצורך חישוב היטל השבחה או מס שבח."
@@ -779,23 +839,27 @@
             }
         ];
 
-        const termsContainer = document.getElementById('termsContainer');
-        const searchInput = document.getElementById('searchInput');
-        const filterControls = document.getElementById('filterControls');
-        const noResults = document.getElementById('noResults');
+        const termsContainer = safeGetElement('termsContainer');
+        const searchInput = safeGetElement('searchInput');
+        const filterControls = safeGetElement('filterControls');
+        const noResults = safeGetElement('noResults');
 
         let currentFilter = 'all';
         let searchTerm = '';
 
-        // Render Terms
+        // Render Terms (Removed inline click handlers, added data attributes)
         const renderTerms = () => {
+            if (!termsContainer) return;
             termsContainer.innerHTML = '';
             let resultsFound = false;
+
+            const safeSearchTerm = searchTerm.toLowerCase();
 
             const filteredTerms = termsData
                 .filter(term => {
                     const matchesCategory = currentFilter === 'all' || term.category === currentFilter;
-                    const matchesSearch = term.term.includes(searchTerm) || term.definition.includes(searchTerm);
+                    const matchesSearch = term.term.toLowerCase().includes(safeSearchTerm) || 
+                                          term.definition.toLowerCase().includes(safeSearchTerm);
                     return matchesCategory && matchesSearch;
                 })
                 .sort((a, b) => a.term.localeCompare(b.term, 'he'));
@@ -816,6 +880,10 @@
 
                 let formulaHtml = term.formula ? `<div class="formula-box">${term.formula}</div>` : '';
 
+                // Safe string for data attribute
+                const safeTerm = term.term.replace(/"/g, '&quot;');
+                const safeDef = term.definition.replace(/"/g, '&quot;');
+
                 termCard.innerHTML = `
                     <div class="flex justify-between items-start mb-3">
                         <h3 class="text-2xl font-bold text-slate-800">${term.term}</h3>
@@ -825,8 +893,8 @@
                     ${formulaHtml}
                     
                     <div class="mt-5 pt-4 border-t border-slate-100">
-                         <button onclick="generateExample('${term.term.replace(/'/g, "\\'")}', '${term.definition.replace(/'/g, "\\'")}', 'card-${index}')" 
-                                 class="text-xs font-bold text-purple-600 bg-purple-50 hover:bg-purple-100 px-3 py-2 rounded-lg transition-colors flex items-center gap-2 w-fit">
+                         <button data-term="${safeTerm}" data-def="${safeDef}" data-id="card-${index}" 
+                                 class="ai-example-btn text-xs font-bold text-purple-600 bg-purple-50 hover:bg-purple-100 px-3 py-2 rounded-lg transition-colors flex items-center gap-2 w-fit">
                              <span>✨</span> דוגמה פרקטית (AI)
                          </button>
                     </div>
@@ -835,12 +903,27 @@
                 termsContainer.appendChild(termCard);
             });
 
-            noResults.style.display = resultsFound ? 'none' : 'block';
+            if (noResults) noResults.style.display = resultsFound ? 'none' : 'block';
         };
 
-        // Generate Example (Simplified Logic)
+        // Event Delegation for "Generate Example" buttons
+        if (termsContainer) {
+            termsContainer.addEventListener('click', (e) => {
+                const btn = e.target.closest('.ai-example-btn');
+                if (btn) {
+                    const term = btn.dataset.term;
+                    const def = btn.dataset.def;
+                    const id = btn.dataset.id;
+                    generateExample(term, def, id);
+                }
+            });
+        }
+
+        // Generate Example (Simplified Logic, Robust DOM)
         window.generateExample = async (term, definition, cardId) => {
             const responseDiv = document.getElementById(`response-${cardId}`);
+            if (!responseDiv) return;
+
             responseDiv.className = "ai-response-box block";
             // Flashing dots animation for loading
             responseDiv.innerHTML = `<div class="flex items-center gap-3"><span class="text-sm text-slate-500">חושב...</span><div class="dot-flashing"></div></div>`;
@@ -857,44 +940,51 @@
 
             const response = await callGeminiAPI(prompt);
             if (response) {
+                // Use safe formatter which includes HTML escaping
                 responseDiv.innerHTML = `<strong>💡 דוגמה מהשטח:</strong><br>${formatGeminiResponse(response)}`;
             } else {
                 responseDiv.className = "hidden";
+                showToast("לא התקבלה תשובה מה-AI", "error");
             }
         };
 
         // Listeners
-        searchInput.addEventListener('keyup', (e) => {
-            searchTerm = e.target.value.trim();
-            renderTerms();
-        });
-
-        filterControls.addEventListener('click', (e) => {
-            if (e.target.tagName === 'BUTTON') {
-                currentFilter = e.target.dataset.filter;
-                document.querySelectorAll('#filterControls .filter-btn').forEach(btn => {
-                    btn.classList.remove('active');
-                });
-                e.target.classList.add('active');
+        if(searchInput) {
+            searchInput.addEventListener('keyup', (e) => {
+                searchTerm = e.target.value.trim();
                 renderTerms();
-            }
-        });
+            });
+        }
+
+        if(filterControls) {
+            filterControls.addEventListener('click', (e) => {
+                if (e.target.tagName === 'BUTTON') {
+                    currentFilter = e.target.dataset.filter;
+                    document.querySelectorAll('#filterControls .filter-btn').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    e.target.classList.add('active');
+                    renderTerms();
+                }
+            });
+        }
 
         // Chat Logic
-        const chatModal = document.getElementById('aiChatModal');
-        const chatHistory = document.getElementById('chatHistory');
-        const chatInput = document.getElementById('chatInput');
+        const chatModal = safeGetElement('aiChatModal');
+        const chatHistory = safeGetElement('chatHistory');
+        const chatInput = safeGetElement('chatInput');
+        const sendChatBtn = safeGetElement('sendChatBtn');
         
-        document.getElementById('openChatBtn').onclick = () => chatModal.classList.remove('hidden');
-        document.getElementById('closeChatBtn').onclick = () => chatModal.classList.add('hidden');
-
         async function sendChat() {
+            if (!chatInput || !chatHistory) return;
+            
             const text = chatInput.value.trim();
             if (!text) return;
 
             // User Msg
             const userDiv = document.createElement('div');
             userDiv.className = "bg-blue-600 text-white p-3 rounded-2xl rounded-tl-none self-end text-sm max-w-[85%] shadow-md mb-2";
+            // Use textContent for safety
             userDiv.textContent = text;
             chatHistory.appendChild(userDiv);
             chatInput.value = '';
@@ -916,54 +1006,59 @@
             `;
 
             const response = await callGeminiAPI(prompt);
-            chatHistory.removeChild(loadingDiv);
+            if(chatHistory.contains(loadingDiv)) {
+                chatHistory.removeChild(loadingDiv);
+            }
 
             if (response) {
                 const aiDiv = document.createElement('div');
                 aiDiv.className = "bg-slate-50 p-3 rounded-2xl rounded-tr-none self-start text-slate-700 text-sm border border-slate-100 max-w-[90%] shadow-sm mb-2 leading-relaxed";
+                // Safe formatting applied here
                 aiDiv.innerHTML = formatGeminiResponse(response);
                 chatHistory.appendChild(aiDiv);
             }
             chatHistory.scrollTop = chatHistory.scrollHeight;
         }
 
-        document.getElementById('sendChatBtn').onclick = sendChat;
-        chatInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendChat(); });
+        if(sendChatBtn) sendChatBtn.onclick = sendChat;
+        if(chatInput) chatInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendChat(); });
 
         // Contact Form AJAX
-        const contactForm = document.getElementById('contactForm');
-        const submitBtn = document.getElementById('submitBtn');
+        const contactForm = safeGetElement('contactForm');
+        const submitBtn = safeGetElement('submitBtn');
 
-        contactForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const originalBtnContent = submitBtn.innerHTML;
-            submitBtn.innerHTML = '<div class="spinner"></div> שולח...';
-            submitBtn.disabled = true;
-            submitBtn.classList.add('opacity-75');
+        if(contactForm && submitBtn) {
+            contactForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const originalBtnContent = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<div class="spinner"></div> שולח...';
+                submitBtn.disabled = true;
+                submitBtn.classList.add('opacity-75');
 
-            const formData = new FormData(contactForm);
+                const formData = new FormData(contactForm);
 
-            fetch("https://formsubmit.co/ajax/realestate.reichman@gmail.com", {
-                method: "POST",
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                submitBtn.innerHTML = originalBtnContent;
-                submitBtn.disabled = false;
-                submitBtn.classList.remove('opacity-75');
-                contactForm.reset();
-                showToast('ההודעה נשלחה בהצלחה!', 'success');
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                submitBtn.innerHTML = originalBtnContent;
-                submitBtn.disabled = false;
-                submitBtn.classList.remove('opacity-75');
-                showToast('שגיאה בשליחה. נסה שוב', 'error');
+                fetch("https://formsubmit.co/ajax/realestate.reichman@gmail.com", {
+                    method: "POST",
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    submitBtn.innerHTML = originalBtnContent;
+                    submitBtn.disabled = false;
+                    submitBtn.classList.remove('opacity-75');
+                    contactForm.reset();
+                    showToast('ההודעה נשלחה בהצלחה!', 'success');
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    submitBtn.innerHTML = originalBtnContent;
+                    submitBtn.disabled = false;
+                    submitBtn.classList.remove('opacity-75');
+                    showToast('שגיאה בשליחה. נסה שוב', 'error');
+                });
             });
-        });
+        }
 
         // Init
         renderTerms();
