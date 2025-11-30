@@ -1,0 +1,207 @@
+/* --- Scrollbars --- */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+    background: #334155;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+html {
+    scroll-padding-top: 180px;
+}
+
+/* --- Animations --- */
+@keyframes highlightGold {
+    0% {
+        box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.5);
+        transform: scale(1.02);
+        background-color: rgba(245, 158, 11, 0.1);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(245, 158, 11, 0);
+        transform: scale(1);
+        background-color: transparent;
+    }
+}
+
+.highlight-term {
+    animation: highlightGold 2s ease-out forwards;
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -468px 0;
+    }
+
+    100% {
+        background-position: 468px 0;
+    }
+}
+
+.skeleton-shimmer {
+    background: #f1f5f9;
+    background-image: linear-gradient(to right, #f1f5f9 0%, #e2e8f0 20%, #f1f5f9 40%, #f1f5f9 100%);
+    background-repeat: no-repeat;
+    background-size: 800px 100%;
+    animation: shimmer 1.5s infinite linear forwards;
+}
+
+.dark .skeleton-shimmer {
+    background: #1e293b;
+    background-image: linear-gradient(to right, #1e293b 0%, #334155 20%, #1e293b 40%, #1e293b 100%);
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.spinner {
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    border-top: 3px solid white;
+    width: 20px;
+    height: 20px;
+    animation: spin 1s linear infinite;
+}
+
+/* Chat Typing Animation */
+.dot-flashing {
+    position: relative;
+    width: 6px;
+    height: 6px;
+    border-radius: 5px;
+    background-color: #9880ff;
+    color: #9880ff;
+    animation: dot-flashing 1s infinite linear alternate;
+    animation-delay: 0.5s;
+}
+
+.dot-flashing::before,
+.dot-flashing::after {
+    content: '';
+    display: inline-block;
+    position: absolute;
+    top: 0;
+    width: 6px;
+    height: 6px;
+    border-radius: 5px;
+    background-color: #9880ff;
+    color: #9880ff;
+    animation: dot-flashing 1s infinite alternate;
+}
+
+.dot-flashing::before {
+    left: -10px;
+    animation-delay: 0s;
+}
+
+.dot-flashing::after {
+    left: 10px;
+    animation-delay: 1s;
+}
+
+@keyframes dot-flashing {
+    0% {
+        background-color: #9880ff;
+    }
+
+    50%,
+    100% {
+        background-color: #ebe6ff;
+    }
+}
+
+.mask-fade-left {
+    -webkit-mask-image: linear-gradient(to left, black 90%, transparent 100%);
+    mask-image: linear-gradient(to left, black 90%, transparent 100%);
+}
+
+.video-modal-content {
+    max-width: 800px;
+    width: 95%;
+    padding: 0;
+    overflow: hidden;
+    background: black;
+    border-radius: 16px;
+}
+
+/* Loading Stars */
+.loader-star {
+    color: #1d4ed8;
+    /* Royal Blue */
+    opacity: 0.2;
+    animation: starFade 1.5s infinite ease-in-out;
+}
+
+@keyframes starFade {
+
+    0%,
+    100% {
+        opacity: 0.2;
+        transform: scale(0.8);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.2);
+    }
+}
+
+.loader-star:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.loader-star:nth-child(2) {
+    animation-delay: 0.1s;
+}
+
+.loader-star:nth-child(3) {
+    animation-delay: 0.2s;
+}
+
+.loader-star:nth-child(4) {
+    animation-delay: 0.3s;
+}
+
+.loader-star:nth-child(5) {
+    animation-delay: 0.4s;
+}
+
+.loader-star:nth-child(6) {
+    animation-delay: 0.5s;
+}
+
+.loader-star:nth-child(7) {
+    animation-delay: 0.6s;
+}
