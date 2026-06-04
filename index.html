@@ -8,7 +8,7 @@
 
     <!-- Send anyone (and search engines) to the new site -->
     <link rel="canonical" href="https://real-estate-dictionary.vercel.app/">
-    <meta http-equiv="refresh" content="8; url=https://real-estate-dictionary.vercel.app/">
+    <meta http-equiv="refresh" content="5; url=https://real-estate-dictionary.vercel.app/">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -61,7 +61,21 @@
         <h1>עברנו לבית חדש 🏡</h1>
         <p>מילון מונחי הנדל"ן עבר לאתר חדש, מהיר ומשופר —<br>עם חיפוש חכם, מחשבונים ועוזר AI חינמי.</p>
         <a class="btn" href="https://real-estate-dictionary.vercel.app/">כניסה לאתר החדש ←</a>
-        <p class="note">מועברים אוטומטית בעוד רגע… אם לא, <a href="https://real-estate-dictionary.vercel.app/">לחצו כאן</a>.</p>
+        <p class="note">מועברים אוטומטית בעוד <span id="count">5</span> שניות… אם לא, <a href="https://real-estate-dictionary.vercel.app/">לחצו כאן</a>.</p>
     </main>
+    <script>
+        // Reliable redirect (more robust than meta-refresh): counts down then
+        // replaces the URL so the old page doesn't stay in the back button.
+        (function () {
+            var TARGET = 'https://real-estate-dictionary.vercel.app/';
+            var n = 5;
+            var el = document.getElementById('count');
+            var t = setInterval(function () {
+                n -= 1;
+                if (el) el.textContent = n;
+                if (n <= 0) { clearInterval(t); window.location.replace(TARGET); }
+            }, 1000);
+        })();
+    </script>
 </body>
 </html>
